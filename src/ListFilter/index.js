@@ -266,12 +266,7 @@ class ListFilter extends React.Component {
     };
 
     setStringInputFilter = ({ value }, name) => {
-
-        console.log("VALUE!!", value);
-        console.log("NAME!!", name);
-
         const { clientFilterBy } = this.state;
-
         const key = getFieldKey(this.props.dataFields, name);
 
         if (!value) clientFilterBy.delete(key);
@@ -321,7 +316,6 @@ class ListFilter extends React.Component {
 
     toggleFilterSelection = e => {
 
-        console.log("FILTERSELECTION!!", e);
         const { name, checked } = e.target;
 
         let { visibleFilters, clientFilterBy } = this.state;
@@ -341,10 +335,7 @@ class ListFilter extends React.Component {
 
     filterSelectionContent = () => {
         const allfields = Object.keys(this.props.dataSource[0]);
-
         const filteredFields = this.discardExcludedFields(allfields);
-
-        console.log("FilteredKeys..", filteredFields);
 
         const fieldCheckBoxes = filteredFields.map(key => {
 

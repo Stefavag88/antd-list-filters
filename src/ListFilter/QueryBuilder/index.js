@@ -28,7 +28,6 @@ parser.functions.isLike = function (first, second) {
 
 export const prepareFilterQuery = (props, state) => {
     let { clientFilterBy } = state;
-    console.log("PROPS", props);
     let queryString = "( ";
 
     for (const entry of clientFilterBy.entries()) {
@@ -68,12 +67,8 @@ export const prepareFilterQuery = (props, state) => {
                     : parseSingleDate(key, val, dateFormat);
             }
             queryString += " )";
-
-            console.log(queryString);
         }
     }
-
-    console.log(queryString);
     return queryString;
 }
 
@@ -96,10 +91,7 @@ const parseSingleDate = (key, dateWithOperator, format) => {
 }
 
 export const applyFilters = (dataSource, filterQuery) => {
-
-    console.log("FILTERQUERY!!", filterQuery);
     const queryFunction = parser.parse(filterQuery).toJSFunction('d');
-    console.log(queryFunction);
     const filteredSource = dataSource.filter(d => queryFunction(d));
 
     return filteredSource;
