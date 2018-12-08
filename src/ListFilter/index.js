@@ -9,7 +9,6 @@ import SearchAllBar from "./Components/SearchAllBar";
 import {getFieldKey, getFieldType, getFieldUIName} from "./FieldHelper";
 import { buildBooleanFilters, buildAutocompleteFilters, buildDateFilters, buildMultiSelectFilters, buildNumberFilters, buildStringInputFilters } from './FilterBuilder/';
 import "./index.css";
-
 const Option = Select.Option;
 
 // Dotnetify.hubServerUrl = AppConfiguration.DotnetifyHubUrl;
@@ -68,10 +67,11 @@ class ListFilter extends React.Component {
 
         for (let entry of this.state.clientFilterBy) {
             const [key, value] = entry;
+            const field = this.props.dataFields[key];
 
             let serverFilter = {
                 Name: key,
-                Type: getFieldType(this.props.dataFields, key),
+                Type: getFieldType(field),
                 Values: Array.isArray(value) ? value : [value]
             };
 
@@ -142,36 +142,36 @@ class ListFilter extends React.Component {
                 distinctValues = new Set([...dataSource.map(record => record[name])]);
 
                 filtersContent.push(
-                    buildAutocompleteFilters(name, dataFields, distinctValues, this.setStringInputFilter)
+                    buildAutocompleteFilters(name, field, distinctValues, this.setStringInputFilter)
                 );
             }
 
             if (field.type === "simplestring") 
                 filtersContent.push(
-                    buildStringInputFilters(name, dataFields, this.setStringInputFilter)
+                    buildStringInputFilters(name, field, this.setStringInputFilter)
                 );
 
             if (field.type === "multiselect") {
                 distinctValues = new Set([...dataSource.map(record => record[name])]);
 
                 filtersContent.push(
-                    buildMultiSelectFilters(name, dataFields, distinctValues, this.setMultiSelectFilter)
+                    buildMultiSelectFilters(name, field, distinctValues, this.setMultiSelectFilter)
                 );
             }
 
             if (field.type === "number") 
                 filtersContent.push(
-                    buildNumberFilters(name, dataFields, null, this.setNumberFilter)
+                    buildNumberFilters(name, field, null, this.setNumberFilter)
                 );
 
             if (field.type === "bool")
                 filtersContent.push(
-                    buildBooleanFilters(name, dataFields, this.setBooleanFilter)
+                    buildBooleanFilters(name, field, this.setBooleanFilter)
                 );
 
             if (field.type === "date")
                 filtersContent.push(
-                    buildDateFilters(name, dataFields, this.setDateFilter)
+                    buildDateFilters(name, field, this.setDateFilter)
                 );
         });
 
@@ -195,13 +195,13 @@ class ListFilter extends React.Component {
             ]);
 
             filterElement = buildAutocompleteFilters(
-                name, dataFields, distinctValues, this.setStringInputFilter
+                fieldName, field, distinctValues, this.setStringInputFilter
             );
         }
 
         if (field.type === "simplestring") 
             filterElement = buildStringInputFilters(
-                name, dataFields, this.setStringInputFilter
+                fieldName, field, this.setStringInputFilter
             );
 
         if (field.type === "multiselect") {
@@ -210,18 +210,18 @@ class ListFilter extends React.Component {
             ]);
 
             filterElement = buildMultiSelectFilters(
-                name, dataFields, distinctValues, this.setMultiSelectFilter
+                fieldName, field, distinctValues, this.setMultiSelectFilter
             );
         }
 
         if (field.type === "number") 
-            filterElement = buildNumberFilters(name, dataFields, null, this.setNumberFilter);
+            filterElement = buildNumberFilters(fieldName, field, null, this.setNumberFilter);
 
         if (field.type === "bool")
-            filterElement = buildBooleanFilters(name, dataFields, this.setBooleanFilter);
+            filterElement = buildBooleanFilters(fieldName, field, this.setBooleanFilter);
 
         if (field.type === "date")
-            filterElement = buildDateFilters(name, dataFields, this.setDateFilter);
+            filterElement = buildDateFilters(fieldName, field, this.setDateFilter);
 
         let { filtersContent } = this.state;
 
@@ -266,6 +266,10 @@ class ListFilter extends React.Component {
     };
 
     setStringInputFilter = ({ value }, name) => {
+
+        console.log("VALUE!!", value);
+        console.log("NAME!!", name);
+
         const { clientFilterBy } = this.state;
 
         const key = getFieldKey(this.props.dataFields, name);
@@ -316,6 +320,8 @@ class ListFilter extends React.Component {
     };
 
     toggleFilterSelection = e => {
+
+        console.log("FILTERSELECTION!!", e);
         const { name, checked } = e.target;
 
         let { visibleFilters, clientFilterBy } = this.state;
@@ -340,19 +346,20 @@ class ListFilter extends React.Component {
 
         console.log("FilteredKeys..", filteredFields);
 
-        const fieldCheckBoxes = filteredFields.map(field => (
-            <Checkbox
-                name={field}
-                key={`${field}-filter-selection`}
-                checked={this.state.visibleFilters.get(field)}
+        const fieldCheckBoxes = filteredFields.map(key => {
+
+            return <Checkbox
+                name={key}
+                key={`${key}-filter-selection`}
+                checked={this.state.visibleFilters.get(key)}
                 onChange={this.toggleFilterSelection}
             >
-                {getFieldUIName(this.props.dataFields, field)}
+                {getFieldUIName(this.props.dataFields[key])}
             </Checkbox>
-        ));
+        });
 
         return fieldCheckBoxes;
-    };
+    }
 
     clearFilters = event => {
         this.setState((state, props) => {

@@ -1,6 +1,8 @@
-export const getFieldUIName = (dataFields , fieldName) => {
+export const getFieldUIName = (fieldName) => {
 
-    const uiName = dataFields[fieldName].uiName;
+    console.log("FIELDNAME!!", fieldName);
+    
+    const uiName = fieldName.uiName;
     
     if (!uiName)
         throw new Error(`ERROR: No uiName defined for field ${fieldName}`);
@@ -8,14 +10,14 @@ export const getFieldUIName = (dataFields , fieldName) => {
     return uiName;
 }
 
-export const getDateFieldFormat = (dataFields, fieldName) => {
+export const getDateFieldFormat = (fieldName) => {
 
-    const fieldType = getFieldType(dataFields,fieldName);
+    const fieldType = getFieldType(fieldName);
 
     if (fieldType !== 'date')
         throw new Error(`ERROR: Trying to get date format for non-date field, ${fieldName}`);
 
-    const dateFormat = dataFields[fieldName].format;
+    const dateFormat = fieldName.format;
     
     if (fieldType === 'date' && !dateFormat)
         throw new Error(`ERROR: No dateformat defined for field ${fieldName}`);
@@ -23,14 +25,14 @@ export const getDateFieldFormat = (dataFields, fieldName) => {
     return dateFormat;
 }
 
-export const getFieldType = (dataFields, fieldName) => {
+export const getFieldType = (fieldName) => {
 
-    return dataFields[fieldName].type;
+    return fieldName.type;
 }
 
-export const getFieldDataSource = (dataFields, fieldName) => {
+export const getFieldDataSource = (fieldName) => {
 
-    const dataSource = dataFields[fieldName].dataSource;
+    const dataSource = fieldName.dataSource;
 
     if (!dataSource)
         console.warn(`WARNING: Server Filter Mode defined and no dataSource given for the field the field ${fieldName}.`);
@@ -48,7 +50,7 @@ export const getFieldKey = (dataFields, fieldName) => {
     return fieldKey;
 }
 
-export const getFieldNullValueReplacement = (dataFields, fieldName) => {
+export const getFieldNullValueReplacement = (fieldName) => {
 
 }
 

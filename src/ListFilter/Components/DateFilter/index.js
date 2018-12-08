@@ -36,9 +36,7 @@ class DateFilter extends React.Component {
             let dates = [];
 
             if (Array.isArray(value)) {
-                console.log(value);
                 value.forEach(val => {
-                    console.log(val);
                     if (!moment(val).isValid()) return;
                     dates.push(moment(val));
                 })
@@ -46,8 +44,6 @@ class DateFilter extends React.Component {
                 if (!moment(value).isValid()) return;
                 dates.push(moment(value));
             }
-
-            console.log(dates);
 
             this.setState((state, props) => {
                 return { date: [...dates.map(dt => dt.format(this.props.format))] }

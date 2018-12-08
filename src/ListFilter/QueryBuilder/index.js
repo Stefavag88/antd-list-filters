@@ -27,18 +27,20 @@ parser.functions.isLike = function (first, second) {
 }
 
 export const prepareFilterQuery = (props, state) => {
-    let { filterBy } = state;
+    let { clientFilterBy } = state;
+    console.log("PROPS", props);
     let queryString = "( ";
 
-    for (const entry of filterBy.entries()) {
+    for (const entry of clientFilterBy.entries()) {
 
+        console.log("ENTRY!", entry);
         let [key, val] = entry;
 
         if (queryString.length > 2)
             queryString += " and (";
 
-
-        if (getFieldType(props, key) === 'multiselect') {                  //For multi-select
+        const field = props.dataFields[key];
+        if (getFieldType(field) === 'multiselect') {                  //For multi-select
 
             let innerQueryString = "";
             val.forEach(v => {
@@ -50,17 +52,17 @@ export const prepareFilterQuery = (props, state) => {
             innerQueryString += " )";
             queryString += innerQueryString;
         } else {
-            if (getFieldType(props, key) === 'autocomplete')
+            if (getFieldType(field) === 'autocomplete')
                 queryString += `d.${key} == "${val}"`;
-            else if (getFieldType(props, key) === 'simplestring')
+            else if (getFieldType(field) === 'simplestring')
                 queryString += `isLike(d.${key}, ${val})`;
-            else if (getFieldType(props, key) === 'number')
+            else if (getFieldType(field) === 'number')
                 queryString += `d.${key} ${val}`;
-            else if (getFieldType(props, key) === 'bool')
+            else if (getFieldType(field) === 'bool')
                 queryString += `d.${key} == ${val}`;
-            else if (getFieldType(props, key) === 'date') {
+            else if (getFieldType(field) === 'date') {
 
-                const dateFormat = getDateFieldFormat(props, key);
+                const dateFormat = getDateFieldFormat(field);
                 queryString += (val.includes(','))
                     ? parseDatesArray(key, val, dateFormat)
                     : parseSingleDate(key, val, dateFormat);
@@ -95,6 +97,7 @@ const parseSingleDate = (key, dateWithOperator, format) => {
 
 export const applyFilters = (dataSource, filterQuery) => {
 
+    console.log("FILTERQUERY!!", filterQuery);
     const queryFunction = parser.parse(filterQuery).toJSFunction('d');
     console.log(queryFunction);
     const filteredSource = dataSource.filter(d => queryFunction(d));
