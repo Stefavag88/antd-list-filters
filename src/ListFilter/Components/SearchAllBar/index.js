@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Input } from 'antd';
+import { toHtml } from '@fortawesome/fontawesome-svg-core';
 
 const Search = Input.Search;
 
@@ -11,9 +12,13 @@ class SearchAllBar extends Component {
     }
 
     innerOnSearch = (event) => {
-        console.log("InneronSearch!!", this.inputRef.current);
-
         this.props.onSearch(event);
+    }
+
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+
+        if(this.props.clearText && !prevProps.clearText)
+            this.inputRef.current.input.input.value = null
     }
 
     render() {

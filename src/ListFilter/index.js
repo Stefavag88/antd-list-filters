@@ -47,6 +47,8 @@ class ListFilter extends React.Component {
             filtersContent: new Map(),
             filtersDrawerVisible: false
         };
+
+        this.inputSearchRef = React.createRef();
     }
 
     //   onException = exception => {
@@ -353,6 +355,9 @@ class ListFilter extends React.Component {
     }
 
     clearFilters = event => {
+
+        console.log("CLEAR!!", this.inputSearchRef.current)//inputRef.current.input.input.value = null;
+
         this.setState((state, props) => {
             return {
                 isFilterEnabled: false,
@@ -524,7 +529,7 @@ class ListFilter extends React.Component {
                         <div className="filter-controls-right">
                             {this.props.mode === "client" && (
                                 <SearchAllBar
-                                    shouldClear={this.state.isFilterEnabled}
+                                    clearText={!this.state.isFilterEnabled}
                                     onSearch={this.onSearchAllClient}
                                 />
                             )}
