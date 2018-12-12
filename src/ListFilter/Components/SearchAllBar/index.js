@@ -7,12 +7,11 @@ class SearchAllBar extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-        }
+        this.inputRef = React.createRef();
     }
 
     innerOnSearch = (event) => {
-        console.log("InneronSearch!!", event);
+        console.log("InneronSearch!!", this.inputRef.current);
 
         this.props.onSearch(event);
     }
@@ -20,6 +19,7 @@ class SearchAllBar extends Component {
     render() {
         return (
             <Search
+                ref={this.inputRef}
                 onSearch={this.innerOnSearch}
                 placeholder="Search..." />
         )
