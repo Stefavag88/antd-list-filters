@@ -1,30 +1,44 @@
 import { getFieldType, getDateFieldFormat } from './../FieldHelper';
-import moment from 'moment';
+import fnsFormatDate from 'date-fns/format';
+import fnsParseDate from 'date-fns/parse';
+import fnsIsAfter from 'date-fns/is_after';
+import fnsIsEqual from 'date-fns/is_equal';
+import fnsIsWithinRange from 'date-fns/is_within_range';
+import fnsIsBefore from 'date-fns/is_before';
 import { Parser } from 'expr-eval';
 
 const operationsMap = {
-    "<=": "checkIsBefore",
-    ">=": "checkIsAfter",
+    "<": "checkIsBefore",
+    ">": "checkIsAfter",
     "in": "checkIsBetween",
     "==": "checkIsSame"
 };
 const parser = new Parser();
 
-parser.functions.checkIsBefore = function (checkedDate, date, format) {
-    return (moment(checkedDate, format).isSameOrBefore(moment(date, format)));
-};
-parser.functions.checkIsAfter = function (checkedDate, date, format) {
-    return (moment(checkedDate, format).isSameOrAfter(moment(date, format)));
-};
-parser.functions.checkIsBetween = function (checkedDate, dateFrom, dateTo, format) {
-    return (moment(checkedDate, format).isBetween(moment(dateFrom, format)), moment(dateTo, format));
-};
-parser.functions.checkIsSame = function (checkedDate, date, format) {
-    return (moment(checkedDate, format).isSame(moment(date, format)));
-};
-parser.functions.isLike = function (first, second) {
-    return first.includes(second);
-}
+const prepareDate = (date, format) => fnsFormatDate(fnsParseDate(date), format);
+
+parser.functions.checkIsBefore = (checkedDate, date, format) => fnsIsBefore(
+    prepareDate(checkedDate, format), 
+    prepareDate(date, format)
+);
+
+parser.functions.checkIsAfter = (checkedDate, date, format) => fnsIsAfter(
+    prepareDate(checkedDate, format), 
+    prepareDate(date, format)
+);
+
+parser.functions.checkIsBetween = (checkedDate, dateFrom, dateTo, format) => fnsIsWithinRange(
+    prepareDate(checkedDate, format), 
+    prepareDate(dateFrom, format), 
+    prepareDate(dateTo, format)
+);
+
+parser.functions.checkIsSame = (checkedDate, date, format) => fnsIsEqual(
+    prepareDate(checkedDate, format), 
+    prepareDate(date, format)
+);
+
+parser.functions.isLike = (whole, part) => whole.includes(part);
 
 export const prepareFilterQuery = (props, state) => {
     let { clientFilterBy } = state;
@@ -61,10 +75,10 @@ export const prepareFilterQuery = (props, state) => {
                 queryString += `d.${key} == ${val}`;
             else if (getFieldType(field) === 'date') {
 
-                const dateFormat = getDateFieldFormat(field);
+                const fnsFormatDate = getDateFieldFormat(field);
                 queryString += (val.includes(','))
-                    ? parseDatesArray(key, val, dateFormat)
-                    : parseSingleDate(key, val, dateFormat);
+                    ? parseDatesArray(key, val, fnsFormatDate)
+                    : parseSingleDate(key, val, fnsFormatDate);
             }
             queryString += " )";
         }

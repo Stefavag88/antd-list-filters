@@ -1,10 +1,14 @@
 import React from 'react';
 import { DatePicker, Select } from 'antd';
 import { PropTypes } from 'prop-types';
-import moment from 'moment';
-
+import fnsFormatDate from 'date-fns/format';
+import fnsParseDate from 'date-fns/parse';
+import fnsIsValid from 'date-fns/is_valid';
 import './index.css';
+
 const Option = Select.Option;
+const prepareDate = (date, format) => fnsFormatDate(fnsParseDate(date), format);
+const isValidDate = date => fnsIsValid(fnsParseDate(date));
 
 class DateFilter extends React.Component {
 
@@ -37,16 +41,16 @@ class DateFilter extends React.Component {
 
             if (Array.isArray(value)) {
                 value.forEach(val => {
-                    if (!moment(val).isValid()) return;
-                    dates.push(moment(val));
+                    if (!isValidDate(val)) return;
+                    dates.push(prepareDate(val, this.props.format));
                 })
             } else {
-                if (!moment(value).isValid()) return;
-                dates.push(moment(value));
+                if (!isValidDate(value)) return;
+                dates.push(prepareDate(value, this.props.format));
             }
 
             this.setState((state, props) => {
-                return { date: [...dates.map(dt => dt.format(this.props.format))] }
+                return { date: [...dates] }
             });
         }
     }
@@ -82,8 +86,8 @@ class DateFilter extends React.Component {
                         className="operator-value"
                         defaultValue="=="
                         onChange={this.handleChange}>
-                        <Option value=">=">{' >= '}</Option>
-                        <Option value="<=">{' <= '}</Option>
+                        <Option value=">">{' > '}</Option>
+                        <Option value="<">{' < '}</Option>
                         <Option value="==">{' = '}</Option>
                         <Option value="in">{' in '}</Option>
                     </Select>
