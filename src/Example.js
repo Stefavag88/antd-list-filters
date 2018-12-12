@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import ListFilter from './ListFilter'
 import { List, Avatar } from 'antd';
+import './example';
 
 const dataFields = {
     cardNumber: {
