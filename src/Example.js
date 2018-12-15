@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ListFilter from './ListFilter/ServerFilter';
+import {ServerFilter} from './ListFilter';
 import { List, Avatar } from 'antd';
 import './example.css';
 
@@ -68,7 +68,8 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-                <ListFilter
+
+                <ServerFilter
                     dataSource={data}
                     dataFields={dataFields}
                     onPostFilters={filters => {
@@ -85,12 +86,11 @@ class App extends Component {
                                 }
                             ]), 2000)
                         });
-
                         return prom;
                     }}
                     renderList={(dataSource, loading) => (
                         <List
-                            loading={loading}
+                            //loading={loading}
                             itemLayout="horizontal"
                             dataSource={dataSource}
                             renderItem={item => (
