@@ -396,6 +396,14 @@ class ServerFilter extends React.Component {
         });
     };
 
+    renderListComponent = (renderList) => {
+        return this.state.ServerFilterBy.length > 0 
+                    ? this.state.isSearching 
+                        ? renderList(this.state.dataSource, true)
+                        : renderList(this.state.FilteredData, false)
+                    : renderList(this.state.dataSource, false)
+    }
+
     render() {
         const { autoBuildFilters, renderList } = this.props;
 
@@ -452,12 +460,7 @@ class ServerFilter extends React.Component {
                         </div>
                     </div>
                 </Card>
-                {this.state.ServerFilterBy.length > 0 
-                    ? this.state.isSearching 
-                        ? renderList(this.state.dataSource, true)
-                        : renderList(this.state.FilteredData, false)
-                    : renderList(this.state.dataSource, false)
-                }
+                {this.renderListComponent(renderList)}
             </div>
         );
     }
@@ -486,9 +489,7 @@ ServerFilter.propTypes = {
     onPostFilters: PropTypes.func.isRequired,
     renderList: PropTypes.func.isRequired,
     customStyles: PropTypes.objectOf(PropTypes.object),
-    inputStyle: PropTypes.object,
     excludeFields: PropTypes.arrayOf(PropTypes.string),
-    onSendFiltersToServer: PropTypes.func,
     withFilterPicker: PropTypes.bool
 };
 
