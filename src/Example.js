@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ListFilter from './ListFilter'
+import ListFilter from './ListFilter/ServerFilter';
 import { List, Avatar } from 'antd';
 import './example.css';
 
@@ -69,33 +69,41 @@ class App extends Component {
         return (
             <div className="App">
                 <ListFilter
-                    mode="client"
                     dataSource={data}
                     dataFields={dataFields}
-                    onSendFiltersToServer={filters => {
-                        console.log(filters);
+                    onPostFilters={filters => {
+                        console.log("SERVERFILTER!!", filters);
 
                         const prom = new Promise((resolve, reject) => {
-                            setTimeout(() => resolve([]), 2000)
+                            setTimeout(() => resolve([
+                                {
+                                    cardNumber: '8712 6789 0912',
+                                    publishDate: '2012-11-12',
+                                    isActive: false,
+                                    daysActive: 987,
+                                    cardType: "VISA CREDIT"
+                                }
+                            ]), 2000)
                         });
 
-                return prom;
-            }}
-                    renderList={dataSource => (
-                    <List
-                        itemLayout="horizontal"
-                        dataSource={dataSource}
-                        renderItem={item => (
-                            <List.Item key={`${item.publishDate}//${item.cardNumber}`}>
-                                <List.Item.Meta
-                                    avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-                                    title={<span>{item.cardNumber} , {item.cardType}</span>}
-                                    description={<span>{item.publishDate}|| Active:{item.isActive.toString()} || Active Days: {item.daysActive}</span>}
-                                />
-                            </List.Item>
-                        )}
-                    />
-                )} />
+                        return prom;
+                    }}
+                    renderList={(dataSource, loading) => (
+                        <List
+                            loading={loading}
+                            itemLayout="horizontal"
+                            dataSource={dataSource}
+                            renderItem={item => (
+                                <List.Item key={`${item.publishDate}//${item.cardNumber}`}>
+                                    <List.Item.Meta
+                                        avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+                                        title={<span>{item.cardNumber} , {item.cardType}</span>}
+                                        description={<span>{item.publishDate}|| Active:{item.isActive.toString()} || Active Days: {item.daysActive}</span>}
+                                    />
+                                </List.Item>
+                            )}
+                        />
+                    )} />
             </div>
         );
     }
