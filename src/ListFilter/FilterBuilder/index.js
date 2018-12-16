@@ -10,15 +10,17 @@ import MultiSelectFilter from '../Components/MultiselectFilter/index';
 
 const Option = Select.Option;
 
-export const buildNumberFilters = (name, field, valuesSource = new Set(), setFilterFunc) => {
+//CONVENTION MADE: For ALL methods, if valuesSource is null 
+//then we get the values automatically(distinct values)
+//for controls that support it..
+
+export const buildNumberFilters = (name, field, valuesSource, setFilterFunc) => {
     let min, max;
 
-    const dataSource = determineFieldDataSource(valuesSource, name);
 
-    if (dataSource && dataSource.length > 1) {
-        min = Math.min(dataSource);
-
-        max = Math.max(dataSource);
+    if (valuesSource && valuesSource.length > 1) {
+        min = Math.min(valuesSource);
+        max = Math.max(valuesSource);
     }
 
     return (
@@ -55,21 +57,17 @@ export const buildBooleanFilters = (name, field, setBooleanFiltersFunc) => {
 };
 
 export const buildMultiSelectFilters = (name, field, valuesSource, setMultiSelectFiltersFunc) => {
-    const stringValues = determineFieldDataSource(valuesSource, name);
 
-    const selectionValues =
-        stringValues.length > 0 ? (
-            stringValues.map((val, index) => <Option key={index}> {val} </Option>)
-        ) : (
-                <Option key={`${name}-empty`}> - </Option>
-            );
+    const selectionValues = valuesSource.length > 0 
+    ? ( valuesSource.map((val, index) => <Option key={index}> {val} </Option>)) 
+    : ( <Option key={`${name}-empty`}> - </Option> );
 
     return (
         <MultiSelectFilter
             key={`multiselect-filter-${name}`}
             name={getFieldUIName(field)}
             dataSource={selectionValues}
-            onChange={state => setMultiSelectFiltersFunc(state, name, stringValues)}
+            onChange={state => setMultiSelectFiltersFunc(state, name, selectionValues)}
         />
     );
 };
@@ -86,47 +84,13 @@ export const buildStringInputFilters = (name, field, setStringInputFilterFunc) =
 };
 
 export const buildAutocompleteFilters = (name, field, valuesSource, setStringInputFiltersFunc) => {
-    const dataSource = determineFieldDataSource(valuesSource, name);
 
     return (
         <AutoCompleteFilter
             key={`autocomplete-filter-${name}`}
             name={getFieldUIName(field)}
             onChange={state => setStringInputFiltersFunc(state, name)}
-            dataSource={dataSource}
+            dataSource={valuesSource}
         />
     );
-};
-
-const determineFieldDataSource = (mode, name, valuesSource) => {
-    const dataSource =
-        mode === "client"
-            ? tryGetValuesSource(valuesSource, name)
-            : getFieldDataSource(name)
-                ? getFieldDataSource(name)
-                : tryGetValuesSource(valuesSource, name);
-
-    return dataSource;
-};
-
-const tryGetValuesSource = (valuesSource, name) => {
-
-    if (!valuesSource)
-        console.error(`ERROR: Failed to get distinct values source from client data for field: ${name}`);
-
-    const valuesArray = Array.from(valuesSource);
-
-    let withoutNulls = [];
-
-    if (getFieldNullValueReplacement(name)) {
-        withoutNulls = valuesArray.map(value =>
-            value === null
-                ? getFieldNullValueReplacement(name)
-                : value
-        );
-
-        return withoutNulls;
-    }
-
-    return valuesArray;
 };

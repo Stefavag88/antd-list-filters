@@ -4,7 +4,7 @@ import { Drawer, Popover, Card, Button, Checkbox, Tooltip } from "antd";
 import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SearchAllBar from "../Components/SearchAllBar";
-import { getFieldKey, getFieldType, getFieldUIName } from "../FieldHelper";
+import { getFieldKey, getFieldType, getFieldUIName, getFieldDataSource } from "../FieldHelper";
 import { buildBooleanFilters, buildAutocompleteFilters, buildDateFilters, buildMultiSelectFilters, buildNumberFilters, buildStringInputFilters } from '../FilterBuilder';
 
 class ServerFilter extends React.Component {
@@ -77,44 +77,40 @@ class ServerFilter extends React.Component {
         let filtersContent = [];
 
         desiredFieldNames.forEach(name => {
-            let distinctValues;
+            let fieldDataSource = getFieldDataSource(dataFields[name]);
 
             const field = dataFields[name];
 
             if (field.type === "autocomplete") {
-                distinctValues = new Set([...dataSource.map(record => record[name])]);
-
                 filtersContent.push(
-                    buildAutocompleteFilters(name, field, distinctValues, this.setStringInputFilter)
+                    buildAutocompleteFilters(name, field, fieldDataSource, this.setStringInputFilter)
                 );
             }
 
             if (field.type === "simplestring")
                 filtersContent.push(
-                    buildStringInputFilters(name, field, this.setStringInputFilter)
+                    buildStringInputFilters(name, field, fieldDataSource, this.setStringInputFilter)
                 );
 
             if (field.type === "multiselect") {
-                distinctValues = new Set([...dataSource.map(record => record[name])]);
-
                 filtersContent.push(
-                    buildMultiSelectFilters(name, field, distinctValues, this.setMultiSelectFilter)
+                    buildMultiSelectFilters(name, field, fieldDataSource, this.setMultiSelectFilter)
                 );
             }
 
             if (field.type === "number")
                 filtersContent.push(
-                    buildNumberFilters(name, field, null, this.setNumberFilter)
+                    buildNumberFilters(name, field, fieldDataSource, this.setNumberFilter)
                 );
 
             if (field.type === "bool")
                 filtersContent.push(
-                    buildBooleanFilters(name, field, this.setBooleanFilter)
+                    buildBooleanFilters(name, field, fieldDataSource, this.setBooleanFilter)
                 );
 
             if (field.type === "date")
                 filtersContent.push(
-                    buildDateFilters(name, field, this.setDateFilter)
+                    buildDateFilters(name, field, fieldDataSource, this.setDateFilter)
                 );
         });
 

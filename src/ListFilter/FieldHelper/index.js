@@ -1,9 +1,9 @@
 export const getFieldUIName = (fieldName) => {
 
     console.log("FIELDNAME!!", fieldName);
-    
+
     const uiName = fieldName.uiName;
-    
+
     if (!uiName)
         throw new Error(`ERROR: No uiName defined for field ${fieldName}`);
 
@@ -18,7 +18,7 @@ export const getDateFieldFormat = (fieldName) => {
         throw new Error(`ERROR: Trying to get date format for non-date field, ${fieldName}`);
 
     const dateFormat = fieldName.format;
-    
+
     if (fieldType === 'date' && !dateFormat)
         throw new Error(`ERROR: No dateformat defined for field ${fieldName}`);
 
@@ -35,7 +35,7 @@ export const getFieldDataSource = (fieldName) => {
     const dataSource = fieldName.dataSource;
 
     if (!dataSource)
-        console.warn(`WARNING: Server Filter Mode defined and no dataSource given for the field the field ${fieldName}.`);
+        console.warn(`WARNING: No dataSource property given to the field the field ${fieldName}.`);
 
     return dataSource;
 }
@@ -50,8 +50,35 @@ export const getFieldKey = (dataFields, fieldName) => {
     return fieldKey;
 }
 
-export const getFieldNullValueReplacement = (fieldName) => {
+const discardNullUndefined = (setOfValues) => {
 
+    if(setOfValues.has(null))
+        setOfValues.delete(null);
+
+    if(setOfValues.has(undefined))
+        setOfValues.delete(undefined);
+
+    if(setOfValues.has(""))
+        setOfValues.delete("");
+
+    return setOfValues;
 }
 
+
+export const generateFieldDataSourceValues = (listDataSource, fieldName) => {
+   
+    //TODO: CHECK THE PERFORMANCE OF THIS FUNCTION FOR LARGE INPUTS.(20-100)
+
+    const retrievedValues = [
+        ...listDataSource.map(record => record[fieldName])
+    ];
+   
+    let distinctValues = new Set(retrievedValues); //KEEP UNIQUE VALUES
+
+    distinctValues = discardNullUndefined(distinctValues);
+
+    return distinctValues.size > 0 
+        ? Array.from(distinctValues)
+        : [];
+}
 

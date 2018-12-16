@@ -5,8 +5,9 @@ import { prepareFilterQuery, applyFilters } from "../QueryBuilder";
 import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SearchAllBar from "../Components/SearchAllBar";
-import { getFieldKey, getFieldUIName } from "../FieldHelper";
+import { getFieldKey, getFieldUIName, getFieldDataSource } from "../FieldHelper";
 import { buildBooleanFilters, buildAutocompleteFilters, buildDateFilters, buildMultiSelectFilters, buildNumberFilters, buildStringInputFilters } from '../FilterBuilder';
+import { generateFieldDataSourceValues } from './../FieldHelper/index';
 
 class ListFilter extends React.Component {
     constructor(props) {
@@ -135,41 +136,27 @@ class ListFilter extends React.Component {
 
         const field = dataFields[fieldName];
 
-        let filterElement, distinctValues;
+        let filterElement;
+        const fieldDataSource = getFieldDataSource(field) || generateFieldDataSourceValues(dataSource, fieldName);
 
-        if (field.type === "autocomplete") {
-            distinctValues = new Set([
-                ...dataSource.map(record => record[fieldName])
-            ]);
-
-            filterElement = buildAutocompleteFilters(
-                fieldName, field, distinctValues, this.setStringInputFilter
-            );
-        }
+        console.log("PASSED DATASOURCE FOR BUILD...", fieldDataSource);
+        if (field.type === "autocomplete") 
+            filterElement = buildAutocompleteFilters(fieldName, field, fieldDataSource, this.setStringInputFilter);
 
         if (field.type === "simplestring")
-            filterElement = buildStringInputFilters(
-                fieldName, field, this.setStringInputFilter
-            );
+            filterElement = buildStringInputFilters(fieldName, field, fieldDataSource, this.setStringInputFilter);
 
-        if (field.type === "multiselect") {
-            distinctValues = new Set([
-                ...dataSource.map(record => record[fieldName])
-            ]);
-
-            filterElement = buildMultiSelectFilters(
-                fieldName, field, distinctValues, this.setMultiSelectFilter
-            );
-        }
+        if (field.type === "multiselect")
+            filterElement = buildMultiSelectFilters(fieldName, field, fieldDataSource, this.setMultiSelectFilter);
 
         if (field.type === "number")
-            filterElement = buildNumberFilters(fieldName, field, null, this.setNumberFilter);
+            filterElement = buildNumberFilters(fieldName, field, fieldDataSource, this.setNumberFilter);
 
         if (field.type === "bool")
-            filterElement = buildBooleanFilters(fieldName, field, this.setBooleanFilter);
+            filterElement = buildBooleanFilters(fieldName, field, fieldDataSource, this.setBooleanFilter);
 
         if (field.type === "date")
-            filterElement = buildDateFilters(fieldName, field, this.setDateFilter);
+            filterElement = buildDateFilters(fieldName, field, fieldDataSource, this.setDateFilter);
 
         let { filtersContent } = this.state;
 
