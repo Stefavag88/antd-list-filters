@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
-import {ClientFilter} from './ListFilter';
+import {ServerFilter} from './ListFilter';
 import { List, Avatar } from 'antd';
 import './example.css';
 
 const dataFields = {
     cardNumber: {
-        type: "simplestring",
-        uiName: "Card Number"
+        type: "autocomplete",
+        uiName: "Card Number", 
+        dataSource:["5436 7865 7873", "8712 6789 0912"]
     },
     cardType: {
         type: "multiselect",
         uiName: "Card Type",
-        //dataSource: ["ELECTRON", "VISA CREDIT", "MASTERCARD DEBIT", "COSMOTE CREDIT", "ATTICA CREDIT"]
+        dataSource: ["ELECTRON", "VISA CREDIT", "MASTERCARD DEBIT", "COSMOTE CREDIT", "ATTICA CREDIT"]
     },
     publishDate: {
         type: "date",
@@ -69,28 +70,28 @@ class App extends Component {
         return (
             <div className="App">
 
-                <ClientFilter
+                <ServerFilter
                     dataSource={data}
                     dataFields={dataFields}
-                    // onPostFilters={filters => {
-                    //     console.log("SERVERFILTER!!", filters);
+                    onPostFilters={filters => {
+                        console.log("SERVERFILTER!!", filters);
 
-                    //     const prom = new Promise((resolve, reject) => {
-                    //         setTimeout(() => resolve([
-                    //             {
-                    //                 cardNumber: '8712 6789 0912',
-                    //                 publishDate: '2012-11-12',
-                    //                 isActive: false,
-                    //                 daysActive: 987,
-                    //                 cardType: "VISA CREDIT"
-                    //             }
-                    //         ]), 2000)
-                    //     });
-                    //     return prom;
-                    // }}
+                        const prom = new Promise((resolve, reject) => {
+                            setTimeout(() => resolve([
+                                {
+                                    cardNumber: '8712 6789 0912',
+                                    publishDate: '2012-11-12',
+                                    isActive: false,
+                                    daysActive: 987,
+                                    cardType: "VISA CREDIT"
+                                }
+                            ]), 2000)
+                        });
+                        return prom;
+                    }}
                     renderList={(dataSource, loading) => (
                         <List
-                            //loading={loading}
+                            loading={loading}
                             itemLayout="horizontal"
                             dataSource={dataSource}
                             renderItem={item => (

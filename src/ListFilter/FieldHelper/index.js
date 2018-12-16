@@ -30,12 +30,18 @@ export const getFieldType = (fieldName) => {
     return fieldName.type;
 }
 
-export const getFieldDataSource = (fieldName) => {
+export const getFieldDataSource = (fieldName, mandatory) => {
 
     const dataSource = fieldName.dataSource;
 
     if (!dataSource)
         console.warn(`WARNING: No dataSource property given to the field the field ${fieldName}.`);
+
+    if(!dataSource && mandatory)
+        throw new Error(`ERROR: property dataSource is required for field ${fieldName}`);
+
+    if(dataSource.length === 0 && mandatory)
+        throw new Error(`WARNING: property dataSource for field ${fieldName} is passed but is an empty array. `);
 
     return dataSource;
 }

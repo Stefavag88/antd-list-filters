@@ -126,41 +126,48 @@ class ServerFilter extends React.Component {
 
         const field = dataFields[fieldName];
 
-        let filterElement, distinctValues;
-
+        let filterElement;
+        
         if (field.type === "autocomplete") {
-            distinctValues = new Set([
-                ...dataSource.map(record => record[fieldName])
-            ]);
+            const fieldDataSource = getFieldDataSource(field, true);
 
             filterElement = buildAutocompleteFilters(
-                fieldName, field, distinctValues, this.setStringInputFilter
+                fieldName, field, fieldDataSource, this.setStringInputFilter
             );
         }
 
-        if (field.type === "simplestring")
+        if (field.type === "simplestring"){
+            const fieldDataSource = getFieldDataSource(field, false);
+
             filterElement = buildStringInputFilters(
-                fieldName, field, this.setStringInputFilter
+                fieldName, field, fieldDataSource, this.setStringInputFilter
             );
+        }
+            
 
         if (field.type === "multiselect") {
-            distinctValues = new Set([
-                ...dataSource.map(record => record[fieldName])
-            ]);
+            const fieldDataSource = getFieldDataSource(field, true);
 
-            filterElement = buildMultiSelectFilters(
-                fieldName, field, distinctValues, this.setMultiSelectFilter
-            );
+            filterElement = buildMultiSelectFilters(fieldName, field, fieldDataSource, this.setMultiSelectFilter);
         }
 
-        if (field.type === "number")
-            filterElement = buildNumberFilters(fieldName, field, null, this.setNumberFilter);
+        if (field.type === "number"){
+            const fieldDataSource = getFieldDataSource(field, false);
 
-        if (field.type === "bool")
-            filterElement = buildBooleanFilters(fieldName, field, this.setBooleanFilter);
+            filterElement = buildNumberFilters(fieldName, field, fieldDataSource, this.setNumberFilter);
+        }
 
-        if (field.type === "date")
-            filterElement = buildDateFilters(fieldName, field, this.setDateFilter);
+        if (field.type === "bool"){
+            const fieldDataSource = getFieldDataSource(field, false);
+
+            filterElement = buildBooleanFilters(fieldName, field, fieldDataSource, this.setBooleanFilter);
+        }
+        
+        if (field.type === "date"){
+            const fieldDataSource = getFieldDataSource(field, false);
+
+            filterElement = buildDateFilters(fieldName, field, fieldDataSource, this.setDateFilter);
+        }
 
         let { filtersContent } = this.state;
 
