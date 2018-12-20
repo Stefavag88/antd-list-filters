@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Drawer, Popover, Card, Button, Checkbox, Tooltip, Tag } from "antd";
+import { Drawer, Popover, Icon, Card, Button, Checkbox, Tooltip, Tag } from "antd";
 import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SearchAllBar from "../Components/SearchAllBar";
@@ -29,7 +29,8 @@ class ServerFilter extends React.Component {
     componentDidMount = () => {
         const { autoBuildFilters } = this.props;
 
-        if (autoBuildFilters) this.autoBuildFilterContent();
+        if (autoBuildFilters) 
+            this.autoBuildFilterContent();
     };
 
     mapFiltersToServer = () => {
@@ -114,15 +115,13 @@ class ServerFilter extends React.Component {
                 );
         });
 
-        filtersContent.push(this.buildSenderButton());
-
         this.setState((state, props) => {
             return { filtersContent };
         });
     };
 
     manualBuildFilterContent = fieldName => {
-        const { dataFields, dataSource } = this.props;
+        const { dataFields } = this.props;
 
         const field = dataFields[fieldName];
 
@@ -291,17 +290,21 @@ class ServerFilter extends React.Component {
 
         const fieldCheckBoxes = filteredFields.map(key => {
 
-            return <Checkbox
-                name={key}
-                key={`${key}-filter-selection`}
-                checked={this.state.visibleFilters.get(key)}
-                onChange={this.toggleFilterSelection}
-            >
-                {getFieldUIName(this.props.dataFields[key])}
-            </Checkbox>
+            return (
+                    <Checkbox
+                        name={key}
+                        key={`${key}-filter-selection`}
+                        checked={this.state.visibleFilters.get(key)}
+                        onChange={this.toggleFilterSelection}>
+                        {getFieldUIName(this.props.dataFields[key])}
+                    </Checkbox>    
+            );
         });
 
-        return fieldCheckBoxes;
+
+        return <div style={{display:'flex', flexDirection:'column', alignItems: 'flex-start' }}>
+                    {fieldCheckBoxes}
+                </div>;
     }
 
     clearFilters = event => {
@@ -335,11 +338,9 @@ class ServerFilter extends React.Component {
         return filterElements;
     };
 
-    onPopoverVisibilityChange = visible => {
-        if (this.state.filtersDrawerVisible && !visible) return;
-
-        this.setState({
-            filtersDrawerVisible: visible
+    toggleDrawerVisibility = event => {
+        this.setState((state, props) => {
+            return {filtersDrawerVisible: !state.filtersDrawerVisible}
         });
     };
 
@@ -376,7 +377,6 @@ class ServerFilter extends React.Component {
     manageFiltersTags = () => {
 
         let filterTags = [];
-        console.log("MANAGE TAG!!");
 
         for (let entry of this.state.clientFilterBy) {
             let [key, value] = entry;
@@ -394,18 +394,16 @@ class ServerFilter extends React.Component {
     }
 
     removeFilter = (event, filterKey) => {
-        //console.log(event, filterKey);
-        let filterState = this.state.clientFilterBy;
-        let visibleFilters = this.state.visibleFilters;
-        let filtersContent = this.state.filtersContent;
+
+        let {clientFilterBy, visibleFilters, filtersContent} = this.state;
 
         visibleFilters.set(filterKey, false);
-        filterState.delete(filterKey);
+        clientFilterBy.delete(filterKey);
         filtersContent.delete(filterKey);
 
         this.setState((state, props) => {
             return {
-                clientFilterBy: filterState,
+                clientFilterBy,
                 visibleFilters, 
                 filtersContent
             }
@@ -435,9 +433,6 @@ class ServerFilter extends React.Component {
             }
         });
 
-        console.error("CLIENT FILTER STATE", this.state.clientFilterBy);
-        console.error("Server Filter State", this.state.ServerFilterBy);
-
         const result = await this.props.onPostFilters(ServerFilterBy);
 
         this.setState({
@@ -451,11 +446,11 @@ class ServerFilter extends React.Component {
                     ? this.state.isSearching 
                         ? renderList(this.state.dataSource, true)
                         : renderList(this.state.FilteredData, false)
-                    : renderList(this.state.dataSource, false)
+                    : renderList(this.state.dataSource, false);
     }
 
     render() {
-        const { autoBuildFilters, renderList } = this.props;
+        const { autoBuildFilters, renderList, withFilterPicker } = this.props;
 
         return (
             <div className="list-filter-container">
@@ -472,25 +467,28 @@ class ServerFilter extends React.Component {
 
                     <div className="filter-controls">
                         <div className="filter-controls-left">
-                            {(this.props.withFilterPicker && !autoBuildFilters) && (
-                                <Popover
-                                    style={{ display: "flex", flexDirection: "column" }}
-                                    placement="bottomLeft"
-                                    onVisibleChange={this.onPopoverVisibilityChange}
-                                    content={this.filterSelectionContent()}
-                                    trigger="click"
-                                >
-                                    <Tooltip placement="topRight" title="Filters">
-                                        <Button
-                                            style={{ margin: "0.3em" }}
-                                            type={"primary"}
-                                            shape="circle"
-                                        >
-                                            <FontAwesomeIcon icon={faSlidersH} />
-                                        </Button>
-                                    </Tooltip>
-                                </Popover>
-                            )}
+                            {withFilterPicker && <div className="filter-picker">
+                                <Tooltip placement="topRight" title="Filters">
+                                    <Button
+                                        style={{ margin: "0.3em" }}
+                                        type={"primary"}
+                                        shape="circle"
+                                        onClick={this.toggleDrawerVisibility}>
+                                        <FontAwesomeIcon icon={faSlidersH} />
+                                    </Button>
+                                </Tooltip>  
+                                {!autoBuildFilters && (
+                                    <Popover
+                                        style={{outline:'none'}}
+                                        placement={'bottom'}
+                                        trigger={['click', 'hover']} 
+                                        content={this.filterSelectionContent()}>
+                                        <Button type="circle" style={{outline:'none'}}>
+                                            <Icon type="down" />
+                                        </Button>   
+                                    </Popover>                      
+                                )}
+                            </div>}
                             {this.state.isFilterEnabled && (
                                 <Button
                                     onClick={this.clearFilters}
@@ -547,7 +545,7 @@ ServerFilter.propTypes = {
 
 ServerFilter.defaultProps = {
     withFilterPicker: true,
-    autoBuildFilters: false,
+    autoBuildFilters: true,
 };
 
 export default ServerFilter;
