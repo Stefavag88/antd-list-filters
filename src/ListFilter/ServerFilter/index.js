@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Drawer, Popover, Card, Button, Checkbox, Tooltip } from "antd";
+import { Drawer, Popover, Card, Button, Checkbox, Tooltip, Tag } from "antd";
 import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SearchAllBar from "../Components/SearchAllBar";
@@ -272,10 +272,14 @@ class ServerFilter extends React.Component {
 
         const filterByClone = clientFilterBy;
 
-        if (filterByClone.has(name)) filterByClone.delete(name);
+        if (filterByClone.has(name)) 
+            filterByClone.delete(name);
 
         this.setState((state, props) => {
-            return { visibleFilters, clientFilterBy: filterByClone };
+            return { 
+                visibleFilters, 
+                clientFilterBy: filterByClone
+            };
         });
 
         this.manualBuildFilterContent(name);
@@ -359,7 +363,7 @@ class ServerFilter extends React.Component {
             };
         });
 
-        const result = await this.onPostFilters(ServerFilterBy);
+        const result = await this.props.onPostFilters(ServerFilterBy);
 
         this.setState((state, props) => {
             return {
@@ -368,6 +372,45 @@ class ServerFilter extends React.Component {
             };
         });
     };
+
+    manageFiltersTags = () => {
+
+        let filterTags = [];
+        console.log("MANAGE TAG!!");
+
+        for (let entry of this.state.clientFilterBy) {
+            let [key, value] = entry;
+            const field = this.props.dataFields[key];   
+
+            filterTags.push(
+                    <Tag
+                        closable={true}
+                        onClose={(event) => this.removeFilter(event, key)}>
+                        {getFieldUIName(field)}
+                    </Tag>
+                );
+        }
+        return filterTags;
+    }
+
+    removeFilter = (event, filterKey) => {
+        //console.log(event, filterKey);
+        let filterState = this.state.clientFilterBy;
+        let visibleFilters = this.state.visibleFilters;
+        let filtersContent = this.state.filtersContent;
+
+        visibleFilters.set(filterKey, false);
+        filterState.delete(filterKey);
+        filtersContent.delete(filterKey);
+
+        this.setState((state, props) => {
+            return {
+                clientFilterBy: filterState,
+                visibleFilters, 
+                filtersContent
+            }
+        });
+    }
 
     buildSenderButton = () => (
 
@@ -381,6 +424,7 @@ class ServerFilter extends React.Component {
     );
 
     handleServerFiltering = async event => {
+
         const ServerFilterBy = this.mapFiltersToServer();
 
         this.setState((state, props) => {
@@ -390,6 +434,9 @@ class ServerFilter extends React.Component {
                 isSearching: true 
             }
         });
+
+        console.error("CLIENT FILTER STATE", this.state.clientFilterBy);
+        console.error("Server Filter State", this.state.ServerFilterBy);
 
         const result = await this.props.onPostFilters(ServerFilterBy);
 
@@ -454,13 +501,15 @@ class ServerFilter extends React.Component {
                                 </Button>
                             )}
                         </div>
-
                         <div className="filter-controls-right">
                             <SearchAllBar
-                                shouldClear={this.state.isFilterEnabled}
+                                clearText={this.state.isFilterEnabled && this.state.ServerFilterBy[0].Name !== "ALL"}
                                 onSearch={this.onSearchAllServer}
                             />
                         </div>
+                    </div>
+                    <div className="tag-manager">
+                        {this.manageFiltersTags()}
                     </div>
                 </Card>
                 {this.renderListComponent(renderList)}

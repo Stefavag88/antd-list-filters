@@ -20,3 +20,10 @@
     align-items: center;
     justify-content: space-between;
 }
+
+.tag-manager{
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    margin-top: 0.5em;
+}

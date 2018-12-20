@@ -34,7 +34,7 @@ export const buildNumberFilters = (name, field, valuesSource, setFilterFunc) => 
     );
 };
 
-export const buildDateFilters = (name, field, setDateFilterFunc) => {
+export const buildDateFilters = (name, field, valuesSource, setDateFilterFunc) => {
 
     return (
         <DateFilter
@@ -46,7 +46,7 @@ export const buildDateFilters = (name, field, setDateFilterFunc) => {
     );
 };
 
-export const buildBooleanFilters = (name, field, setBooleanFiltersFunc) => {
+export const buildBooleanFilters = (name, field, valuesSource, setBooleanFiltersFunc) => {
     return (
         <BooleanFilter
             key={`boolean-filter-${name}`}
@@ -72,7 +72,7 @@ export const buildMultiSelectFilters = (name, field, valuesSource, setMultiSelec
     );
 };
 
-export const buildStringInputFilters = (name, field, setStringInputFilterFunc) => {
+export const buildStringInputFilters = (name, field, valuesSource, setStringInputFilterFunc) => {
 
     return (
         <StringInputFilter

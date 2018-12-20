@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Input } from 'antd';
-import { toHtml } from '@fortawesome/fontawesome-svg-core';
 
 const Search = Input.Search;
 

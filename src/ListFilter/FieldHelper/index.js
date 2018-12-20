@@ -40,7 +40,7 @@ export const getFieldDataSource = (fieldName, mandatory) => {
     if(!dataSource && mandatory)
         throw new Error(`ERROR: property dataSource is required for field ${fieldName}`);
 
-    if(dataSource.length === 0 && mandatory)
+    if(dataSource && dataSource.length === 0 && mandatory)
         throw new Error(`WARNING: property dataSource for field ${fieldName} is passed but is an empty array. `);
 
     return dataSource;
