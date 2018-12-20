@@ -67,7 +67,7 @@ export const buildMultiSelectFilters = (name, field, valuesSource, setMultiSelec
             key={`multiselect-filter-${name}`}
             name={getFieldUIName(field)}
             dataSource={selectionValues}
-            onChange={state => setMultiSelectFiltersFunc(state, name, selectionValues)}
+            onChange={state => setMultiSelectFiltersFunc(state, name, valuesSource)}
         />
     );
 };

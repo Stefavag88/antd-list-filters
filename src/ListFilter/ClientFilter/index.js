@@ -41,7 +41,7 @@ class ListFilter extends React.Component {
 
     sendFilterQuery = e => {
         let { clientFilterBy } = this.state;
-
+        console.log("FILTERS APPLIED!", clientFilterBy);
         if (!clientFilterBy) return;
 
         if (clientFilterBy.size === 0) {
@@ -82,7 +82,7 @@ class ListFilter extends React.Component {
         const desiredFieldNames = this.discardExcludedFields(allfieldNames);
 
         let filtersContent = [];
-
+        console.log("AUTOBUILDING FILTERS..");
         desiredFieldNames.forEach(name => {
             const field = dataFields[name];
             const fieldDataSource = getFieldDataSource(field) || generateFieldDataSourceValues(dataSource, name);
@@ -119,7 +119,7 @@ class ListFilter extends React.Component {
                     buildDateFilters(name, field, fieldDataSource,this.setDateFilter)
                 );
         });
-
+        console.log("BEFORE SET FILTERSCONTENT..", filtersContent);
         this.setState((state, props) => {
             return { filtersContent };
         });
@@ -166,13 +166,13 @@ class ListFilter extends React.Component {
 
     setDateFilter = ({ operator, date }, name) => {
         const { clientFilterBy } = this.state;
-
         const key = getFieldKey(this.props.dataFields, name);
-
         const value = `${operator} ${date}`;
 
-        if (!date) clientFilterBy.delete(key);
-        else clientFilterBy.set(key, value);
+        if (!date) 
+            clientFilterBy.delete(key);
+        else 
+            clientFilterBy.set(key, value);
 
         this.setState({
             clientFilterBy
@@ -181,13 +181,13 @@ class ListFilter extends React.Component {
 
     setNumberFilter = ({ operator, number }, name) => {
         const { clientFilterBy } = this.state;
-
         const key = getFieldKey(this.props.dataFields, name);
-
         const value = `${operator} ${number}`;
 
-        if (!number) clientFilterBy.delete(key);
-        else clientFilterBy.set(key, value);
+        if (!number) 
+            clientFilterBy.delete(key);
+        else 
+            clientFilterBy.set(key, value);
 
         this.setState({
             clientFilterBy
@@ -198,8 +198,10 @@ class ListFilter extends React.Component {
         const { clientFilterBy } = this.state;
         const key = getFieldKey(this.props.dataFields, name);
 
-        if (!value) clientFilterBy.delete(key);
-        else clientFilterBy.set(key, value);
+        if (!value) 
+            clientFilterBy.delete(key);
+        else 
+            clientFilterBy.set(key, value);
 
         this.setState({
             clientFilterBy
@@ -208,13 +210,13 @@ class ListFilter extends React.Component {
 
     setMultiSelectFilter = ({ values }, name, stringValues) => {
         const { clientFilterBy } = this.state;
-
         const key = getFieldKey(this.props.dataFields, name);
-
         const actualValues = values.map(val => stringValues[val]);
 
-        if (!actualValues || actualValues.length === 0) clientFilterBy.delete(key);
-        else clientFilterBy.set(key, actualValues);
+        if (!actualValues || actualValues.length === 0) 
+            clientFilterBy.delete(key);
+        else 
+            clientFilterBy.set(key, actualValues);
 
         this.setState({
             clientFilterBy
@@ -223,11 +225,12 @@ class ListFilter extends React.Component {
 
     setBooleanFilter = ({ value }, name) => {
         const { clientFilterBy } = this.state;
-
         const key = getFieldKey(this.props.dataFields, name);
 
-        if (!value || value === " - ") clientFilterBy.delete(key);
-        else clientFilterBy.set(key, value);
+        if (!value || value === " - ") 
+            clientFilterBy.delete(key);
+        else 
+            clientFilterBy.set(key, value);
 
         this.setState({
             clientFilterBy
@@ -244,9 +247,7 @@ class ListFilter extends React.Component {
     };
 
     toggleFilterSelection = e => {
-
         const { name, checked } = e.target;
-
         let { visibleFilters, clientFilterBy } = this.state;
 
         visibleFilters.set(name, checked);
@@ -284,19 +285,20 @@ class ListFilter extends React.Component {
     }
 
     clearFilters = event => {
-
-        this.setState((state, props) => {
-            return {
-                isFilterEnabled: false,
-                dataSource: props.dataSource,
-                clientFilterBy: new Map(),
-                visibleFilters: props.savedVisibleFilters || new Map(),
-                filtersContent: new Map()
-            };
-        });
+        
+            this.setState((state, props) => {
+                return {
+                    isFilterEnabled: false,
+                    dataSource: props.dataSource,
+                    clientFilterBy: new Map(),
+                    visibleFilters: props.savedVisibleFilters || new Map(),
+                    filtersContent: new Map()
+                };
+            });
     };
 
     showFiltersInDrawer = () => {
+
         let filterElements = [];
 
         for (const value of this.state.filtersContent.values()) {

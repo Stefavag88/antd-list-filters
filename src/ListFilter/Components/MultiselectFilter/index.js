@@ -17,7 +17,6 @@ class MultiSelectFilter extends React.Component {
     }
 
     handleChange = (values) => {
-
         this.setState((state, props) => {
             return { values }
         });

@@ -413,6 +413,8 @@ class ServerFilter extends React.Component {
     buildSenderButton = () => (
 
         <Button
+            tabIndex="1"
+            key="query-sender-button"
             loading={this.state.isSearching}
             type="primary"
             style={{ marginTop: "1em" }}
