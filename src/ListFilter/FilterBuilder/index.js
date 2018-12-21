@@ -17,10 +17,10 @@ const Option = Select.Option;
 export const buildNumberFilters = (name, field, valuesSource, setFilterFunc) => {
     let min, max;
 
-
     if (valuesSource && valuesSource.length > 1) {
-        min = Math.min(valuesSource);
-        max = Math.max(valuesSource);
+        let [checkMin, checkMax] = [Math.min(valuesSource), Math.max(valuesSource)];
+        min = isNaN(checkMin) ? -Infinity : checkMin; 
+        max = isNaN(checkMax) ? Infinity : checkMax; 
     }
 
     return (
