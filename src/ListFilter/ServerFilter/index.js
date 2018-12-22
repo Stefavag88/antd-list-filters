@@ -309,6 +309,10 @@ class ServerFilter extends React.Component {
 
     clearFilters = event => {
 
+        const onResetState = this.props.autoBuildFilters 
+            ? this.autoBuildFilterContent
+            : null;
+
         this.setState((state, props) => {
             return {
                 isFilterEnabled: false,
@@ -319,7 +323,7 @@ class ServerFilter extends React.Component {
                 visibleFilters: props.savedVisibleFilters || new Map(),
                 filtersContent: new Map()
             };
-        });
+        }, onResetState);
     };
 
     showFiltersInDrawer = () => {

@@ -76,6 +76,7 @@ export const buildStringInputFilters = (name, field, valuesSource, setStringInpu
 
     return (
         <StringInputFilter
+            //clear={false}
             key={`stringInput-filter-${name}`}
             name={getFieldUIName(field)}
             onChange={state => setStringInputFilterFunc(state, name)}
@@ -83,10 +84,11 @@ export const buildStringInputFilters = (name, field, valuesSource, setStringInpu
     );
 };
 
-export const buildAutocompleteFilters = (name, field, valuesSource, setStringInputFiltersFunc) => {
+export const buildAutocompleteFilters = (name, field, valuesSource, setStringInputFiltersFunc, clear = false) => {
 
     return (
         <AutoCompleteFilter
+            clear={clear}
             key={`autocomplete-filter-${name}`}
             name={getFieldUIName(field)}
             onChange={state => setStringInputFiltersFunc(state, name)}

@@ -12,21 +12,26 @@ class AutoCompleteFilter extends React.Component {
         this.state = {
             value: null
         }
+
+        this.inputRef = React.createRef();
     }
 
     componentDidUpdate = (prevProps, prevState) => {
-        this.props.onChange(this.state)
+        this.props.onChange(this.state);
+
+        console.log("AUTOCOMPLETE UPDATE!!", this.inputRef.current.select.rcSelect);
+        if(this.props.clear)
+            this.inputRef.current.select.rcSelect.setInputValue("");
     }
 
     handleChange = (value) => {
-
+        
         this.setState((state, props) => {
             return { value }
         });
     }
 
     render() {
-
         const { name, dataSource } = this.props;
 
         return (
@@ -34,6 +39,7 @@ class AutoCompleteFilter extends React.Component {
                 <span>{name}</span>
                 <div className="filter-content">
                 <AutoComplete
+                    ref={this.inputRef}
                     style={{width:'100%', minWidth:200}}
                     allowClear={true}
                     key={name}

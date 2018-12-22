@@ -29,7 +29,7 @@ class ListFilter extends React.Component {
     componentDidMount = () => {
         const { autoBuildFilters } = this.props;
 
-        if (autoBuildFilters) 
+        if (autoBuildFilters)
             this.autoBuildFilterContent();
     };
 
@@ -51,7 +51,6 @@ class ListFilter extends React.Component {
         }
 
         const filterQuery = prepareFilterQuery(this.props, this.state);
-
         const newDataSource = applyFilters(this.props.dataSource, filterQuery);
 
         this.setState((state, props) => {
@@ -76,7 +75,7 @@ class ListFilter extends React.Component {
         return fieldNamesExcluded;
     };
 
-    autoBuildFilterContent = () => {
+    autoBuildFilterContent = (clearFields = false) => {
         const { dataSource, dataFields } = this.props;
         const allfieldNames = Object.keys(dataSource[0]);
         const desiredFieldNames = this.discardExcludedFields(allfieldNames);
@@ -89,7 +88,7 @@ class ListFilter extends React.Component {
 
             if (field.type === "autocomplete") {
                 filtersContent.push(
-                    buildAutocompleteFilters(name, field, fieldDataSource, this.setStringInputFilter)
+                    buildAutocompleteFilters(name, field, fieldDataSource, this.setStringInputFilter, clearFields)
                 );
             }
 
@@ -116,7 +115,7 @@ class ListFilter extends React.Component {
 
             if (field.type === "date")
                 filtersContent.push(
-                    buildDateFilters(name, field, fieldDataSource,this.setDateFilter)
+                    buildDateFilters(name, field, fieldDataSource, this.setDateFilter)
                 );
         });
         console.log("BEFORE SET FILTERSCONTENT..", filtersContent);
@@ -134,7 +133,7 @@ class ListFilter extends React.Component {
         const fieldDataSource = getFieldDataSource(field) || generateFieldDataSourceValues(dataSource, fieldName);
 
         console.log("PASSED DATASOURCE FOR BUILD...", fieldDataSource);
-        if (field.type === "autocomplete") 
+        if (field.type === "autocomplete")
             filterElement = buildAutocompleteFilters(fieldName, field, fieldDataSource, this.setStringInputFilter);
 
         if (field.type === "simplestring")
@@ -169,9 +168,9 @@ class ListFilter extends React.Component {
         const key = getFieldKey(this.props.dataFields, name);
         const value = `${operator} ${date}`;
 
-        if (!date) 
+        if (!date)
             clientFilterBy.delete(key);
-        else 
+        else
             clientFilterBy.set(key, value);
 
         this.setState({
@@ -184,9 +183,9 @@ class ListFilter extends React.Component {
         const key = getFieldKey(this.props.dataFields, name);
         const value = `${operator} ${number}`;
 
-        if (!number) 
+        if (!number)
             clientFilterBy.delete(key);
-        else 
+        else
             clientFilterBy.set(key, value);
 
         this.setState({
@@ -198,9 +197,9 @@ class ListFilter extends React.Component {
         const { clientFilterBy } = this.state;
         const key = getFieldKey(this.props.dataFields, name);
 
-        if (!value) 
+        if (!value)
             clientFilterBy.delete(key);
-        else 
+        else
             clientFilterBy.set(key, value);
 
         this.setState({
@@ -213,9 +212,9 @@ class ListFilter extends React.Component {
         const key = getFieldKey(this.props.dataFields, name);
         const actualValues = values.map(val => stringValues[val]);
 
-        if (!actualValues || actualValues.length === 0) 
+        if (!actualValues || actualValues.length === 0)
             clientFilterBy.delete(key);
-        else 
+        else
             clientFilterBy.set(key, actualValues);
 
         this.setState({
@@ -227,9 +226,9 @@ class ListFilter extends React.Component {
         const { clientFilterBy } = this.state;
         const key = getFieldKey(this.props.dataFields, name);
 
-        if (!value || value === " - ") 
+        if (!value || value === " - ")
             clientFilterBy.delete(key);
-        else 
+        else
             clientFilterBy.set(key, value);
 
         this.setState({
@@ -279,22 +278,26 @@ class ListFilter extends React.Component {
             </Checkbox>
         });
 
-        return  <div style={{display:'flex', flexDirection:'column', alignItems: 'flex-start' }}>
-                    {fieldCheckBoxes}
-                </div>;
+        return <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            {fieldCheckBoxes}
+        </div>;
     }
 
     clearFilters = event => {
-        
-            this.setState((state, props) => {
-                return {
-                    isFilterEnabled: false,
-                    dataSource: props.dataSource,
-                    clientFilterBy: new Map(),
-                    visibleFilters: props.savedVisibleFilters || new Map(),
-                    filtersContent: new Map()
-                };
-            });
+
+        const onResetState = this.props.autoBuildFilters 
+            ? this.autoBuildFilterContent
+            : null;
+
+        this.setState((state, props) => {
+            return {
+                isFilterEnabled: false,
+                dataSource: props.dataSource,
+                clientFilterBy: new Map(),
+                visibleFilters: props.savedVisibleFilters || new Map(),
+                filtersContent: new Map()
+            };
+        }, onResetState);
     };
 
     showFiltersInDrawer = () => {
@@ -316,7 +319,7 @@ class ListFilter extends React.Component {
 
     toggleDrawerVisibility = event => {
         this.setState((state, props) => {
-            return {filtersDrawerVisible: !state.filtersDrawerVisible}
+            return { filtersDrawerVisible: !state.filtersDrawerVisible }
         });
     };
 
@@ -352,16 +355,16 @@ class ListFilter extends React.Component {
 
     buildSenderButton = () => {
 
-            return (
-                <Button
-                    key="query-sender-button"
-                    tabIndex="1"
-                    type="primary"
-                    style={{ marginTop: "1em" }}
-                    onClick={this.sendFilterQuery}>
-                    Search
+        return (
+            <Button
+                key="query-sender-button"
+                tabIndex="1"
+                type="primary"
+                style={{ marginTop: "1em" }}
+                onClick={this.sendFilterQuery}>
+                Search
                 </Button>
-            );
+        );
     };
 
     render() {
@@ -379,7 +382,7 @@ class ListFilter extends React.Component {
                     </Drawer>
 
                     <div className="filter-controls">
-                    <div className="filter-controls-left">
+                        <div className="filter-controls-left">
                             {withFilterPicker && <div className="filter-picker">
                                 <Tooltip placement="topRight" title="Filters">
                                     <Button
@@ -389,17 +392,17 @@ class ListFilter extends React.Component {
                                         onClick={this.toggleDrawerVisibility}>
                                         <FontAwesomeIcon icon={faSlidersH} />
                                     </Button>
-                                </Tooltip>  
+                                </Tooltip>
                                 {!autoBuildFilters && (
                                     <Popover
-                                        style={{outline:'none'}}
+                                        style={{ outline: 'none' }}
                                         placement={'bottom'}
-                                        trigger={['click', 'hover']} 
+                                        trigger={['click', 'hover']}
                                         content={this.filterSelectionContent()}>
                                         <Button type="circle">
                                             <Icon type="down" />
-                                        </Button>   
-                                    </Popover>                      
+                                        </Button>
+                                    </Popover>
                                 )}
                             </div>}
                             {this.state.isFilterEnabled && (
