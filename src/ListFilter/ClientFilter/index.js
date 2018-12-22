@@ -75,50 +75,63 @@ class ListFilter extends React.Component {
         return fieldNamesExcluded;
     };
 
-    autoBuildFilterContent = (clearFields = false) => {
-        const { dataSource, dataFields } = this.props;
-        const allfieldNames = Object.keys(dataSource[0]);
-        const desiredFieldNames = this.discardExcludedFields(allfieldNames);
+    decideFiltersToBuild = () => {
+        const {dataSource} = this.props;
+        const {visibleFilters} = this.state;
+        let filtersToBuild = [];
 
-        let filtersContent = [];
-        console.log("AUTOBUILDING FILTERS..");
-        desiredFieldNames.forEach(name => {
+        if(visibleFilters.size > 0){
+            filtersToBuild = Array.from(visibleFilters.keys());
+        }else{
+            const allfieldNames = Object.keys(dataSource[0]);
+            filtersToBuild = this.discardExcludedFields(allfieldNames);
+        }
+
+        return filtersToBuild;
+    }
+
+    autoBuildFilterContent = (clearFields = false) => {
+        const { dataFields, dataSource } = this.props;
+        const filtersToBuild = this.decideFiltersToBuild();
+        
+        let filtersContent = new Map();
+        filtersToBuild.forEach(name => {
             const field = dataFields[name];
             const fieldDataSource = getFieldDataSource(field) || generateFieldDataSourceValues(dataSource, name);
 
             if (field.type === "autocomplete") {
-                filtersContent.push(
+                filtersContent.set(name,
                     buildAutocompleteFilters(name, field, fieldDataSource, this.setStringInputFilter, clearFields)
                 );
             }
 
             if (field.type === "simplestring")
-                filtersContent.push(
+                filtersContent.set(name,
                     buildStringInputFilters(name, field, fieldDataSource, this.setStringInputFilter)
                 );
 
             if (field.type === "multiselect") {
-                filtersContent.push(
+                filtersContent.set(name,
                     buildMultiSelectFilters(name, field, fieldDataSource, this.setMultiSelectFilter)
                 );
             }
 
             if (field.type === "number")
-                filtersContent.push(
+                filtersContent.set(name,
                     buildNumberFilters(name, field, fieldDataSource, this.setNumberFilter)
                 );
 
             if (field.type === "bool")
-                filtersContent.push(
+                filtersContent.set(name,
                     buildBooleanFilters(name, field, fieldDataSource, this.setBooleanFilter)
                 );
 
             if (field.type === "date")
-                filtersContent.push(
+                filtersContent.set(name,
                     buildDateFilters(name, field, fieldDataSource, this.setDateFilter)
                 );
         });
-        console.log("BEFORE SET FILTERSCONTENT..", filtersContent);
+
         this.setState((state, props) => {
             return { filtersContent };
         });
@@ -285,19 +298,16 @@ class ListFilter extends React.Component {
 
     clearFilters = event => {
 
-        const onResetState = this.props.autoBuildFilters 
-            ? this.autoBuildFilterContent
-            : null;
-
         this.setState((state, props) => {
             return {
                 isFilterEnabled: false,
                 dataSource: props.dataSource,
+                ServerFilterBy: [],
+                FilteredData: [],
                 clientFilterBy: new Map(),
-                visibleFilters: props.savedVisibleFilters || new Map(),
                 filtersContent: new Map()
             };
-        }, onResetState);
+        }, this.autoBuildFilterContent);
     };
 
     showFiltersInDrawer = () => {
@@ -457,7 +467,7 @@ ListFilter.propTypes = {
 
 ListFilter.defaultProps = {
     withFilterPicker: true,
-    autoBuildFilters: true,
+    autoBuildFilters: false,
 };
 
 export default ListFilter;
