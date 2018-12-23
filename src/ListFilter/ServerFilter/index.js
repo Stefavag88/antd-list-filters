@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Drawer, Popover, Icon, Card, Button, Checkbox, Tooltip, Tag } from "antd";
+import { Drawer, Popover, Icon, Card, Button, Checkbox, Tooltip } from "antd";
 import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SearchAllBar from "../Components/SearchAllBar";
@@ -73,16 +73,13 @@ class ServerFilter extends React.Component {
     getFiltersToBuild = () => {
         const {dataSource} = this.props;
         const {visibleFilters} = this.state;
-        let filtersToBuild = [];
 
         if(visibleFilters.size > 0){
-            filtersToBuild = Array.from(visibleFilters.keys());
+            return Array.from(visibleFilters.keys());
         }else{
             const allfieldNames = Object.keys(dataSource[0]);
-            filtersToBuild = this.discardExcludedFields(allfieldNames);
+            return this.discardExcludedFields(allfieldNames);
         }
-
-        return filtersToBuild;
     }
 
     autoBuildFilterContent = () => {
@@ -134,13 +131,11 @@ class ServerFilter extends React.Component {
         });
     };
 
-    manualBuildFilterContent = fieldName => {
+    manualBuildFilterContent = (fieldName, remove = false) => {
         const { dataFields } = this.props;
-
         const field = dataFields[fieldName];
-
         let filterElement;
-        
+
         if (field.type === "autocomplete") {
             const fieldDataSource = getFieldDataSource(field, true);
 
@@ -155,8 +150,7 @@ class ServerFilter extends React.Component {
             filterElement = buildStringInputFilters(
                 fieldName, field, fieldDataSource, this.setStringInputFilter
             );
-        }
-            
+        }   
 
         if (field.type === "multiselect") {
             const fieldDataSource = getFieldDataSource(field, true);
@@ -183,11 +177,12 @@ class ServerFilter extends React.Component {
         }
 
         let { filtersContent } = this.state;
-        console.log("FILTERSCONTENT!!",filtersContent);
-        if (filtersContent.has(fieldName))
-            filtersContent.delete(fieldName);
-        else
+        
+        if (filtersContent.has(fieldName) && remove)
+           filtersContent.delete(fieldName);
+        else{
             filtersContent.set(fieldName, filterElement);
+        }
 
         this.setState((state, props) => {
             return { filtersContent };
@@ -295,7 +290,7 @@ class ServerFilter extends React.Component {
             };
         });
 
-        this.manualBuildFilterContent(name);
+        this.manualBuildFilterContent(name, true);
     };
 
     filterSelectionContent = () => {
@@ -337,7 +332,7 @@ class ServerFilter extends React.Component {
 
     showFiltersInDrawer = () => {
         let filterElements = [];
-
+        console.log("showFiltersInDrawer!!!", this.state.filtersContent);
         for (const value of this.state.filtersContent.values()) {
             filterElements.push(value);
         }
@@ -387,42 +382,6 @@ class ServerFilter extends React.Component {
         });
     };
 
-    manageFiltersTags = () => {
-
-        let filterTags = [];
-
-        for (let entry of this.state.clientFilterBy) {
-            let [key, value] = entry;
-            const field = this.props.dataFields[key];   
-
-            filterTags.push(
-                    <Tag
-                        closable={true}
-                        onClose={(event) => this.removeFilter(event, key)}>
-                        {getFieldUIName(field)}
-                    </Tag>
-                );
-        }
-        return filterTags;
-    }
-
-    removeFilter = (event, filterKey) => {
-
-        let {clientFilterBy, visibleFilters, filtersContent} = this.state;
-
-        visibleFilters.set(filterKey, false);
-        clientFilterBy.delete(filterKey);
-        filtersContent.delete(filterKey);
-
-        this.setState((state, props) => {
-            return {
-                clientFilterBy,
-                visibleFilters, 
-                filtersContent
-            }
-        });
-    }
-
     buildSenderButton = () => (
 
         <Button
@@ -457,11 +416,14 @@ class ServerFilter extends React.Component {
     };
 
     renderListComponent = (renderList) => {
-        return this.state.ServerFilterBy.length > 0 
-                    ? this.state.isSearching 
-                        ? renderList(this.state.dataSource, true)
-                        : renderList(this.state.FilteredData, false)
-                    : renderList(this.state.dataSource, false);
+
+        const { ServerFilterBy, isSearching, dataSource, FilteredData } = this.state;
+
+        return ServerFilterBy.length > 0 
+                    ? isSearching 
+                        ? renderList(dataSource, true)
+                        : renderList(FilteredData, false)
+                    : renderList(dataSource, false);
     }
 
     render() {
@@ -475,9 +437,10 @@ class ServerFilter extends React.Component {
                         mask={false}
                         onClose={this.closeFiltersDrawer}
                         visible={this.state.filtersDrawerVisible}>
+                        {!this.state.updating && 
                         <div className="filters-content">
                             {this.showFiltersInDrawer()}
-                        </div>
+                        </div>}
                     </Drawer>
 
                     <div className="filter-controls">
@@ -523,9 +486,9 @@ class ServerFilter extends React.Component {
                             />
                         </div>
                     </div>
-                    <div className="tag-manager">
+                    {/* <div className="tag-manager">
                         {this.manageFiltersTags()}
-                    </div>
+                    </div> */}
                 </Card>
                 {this.renderListComponent(renderList)}
             </div>

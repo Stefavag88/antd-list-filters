@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {ClientFilter} from './ListFilter';
+import { ServerFilter } from './ListFilter';
 import { List, Avatar } from 'antd';
 import './example.css';
 
@@ -70,7 +70,7 @@ class App extends Component {
         return (
             <div className="App">
 
-                <ClientFilter
+                <ServerFilter
                     dataSource={data}
                     dataFields={dataFields}
                     onPostFilters={filters => {
