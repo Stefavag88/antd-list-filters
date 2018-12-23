@@ -437,10 +437,9 @@ class ServerFilter extends React.Component {
                         mask={false}
                         onClose={this.closeFiltersDrawer}
                         visible={this.state.filtersDrawerVisible}>
-                        {!this.state.updating && 
                         <div className="filters-content">
                             {this.showFiltersInDrawer()}
-                        </div>}
+                        </div>
                     </Drawer>
 
                     <div className="filter-controls">
