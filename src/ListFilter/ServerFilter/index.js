@@ -29,7 +29,7 @@ class ServerFilter extends React.Component {
     componentDidMount = () => {
         const { autoBuildFilters } = this.props;
 
-        if (autoBuildFilters) 
+        if (autoBuildFilters)
             this.autoBuildFilterContent();
     };
 
@@ -71,12 +71,12 @@ class ServerFilter extends React.Component {
     };
 
     getFiltersToBuild = () => {
-        const {dataSource} = this.props;
-        const {visibleFilters} = this.state;
+        const { dataSource } = this.props;
+        const { visibleFilters } = this.state;
 
-        if(visibleFilters.size > 0){
+        if (visibleFilters.size > 0) {
             return Array.from(visibleFilters.keys());
-        }else{
+        } else {
             const allfieldNames = Object.keys(dataSource[0]);
             return this.discardExcludedFields(allfieldNames);
         }
@@ -85,7 +85,7 @@ class ServerFilter extends React.Component {
     autoBuildFilterContent = () => {
         const { dataFields } = this.props;
         const filtersToBuild = this.getFiltersToBuild();
-        
+
         let filtersContent = new Map();
 
         filtersToBuild.forEach(name => {
@@ -116,7 +116,7 @@ class ServerFilter extends React.Component {
                 );
 
             if (field.type === "bool")
-                filtersContent.set(name, 
+                filtersContent.set(name,
                     buildBooleanFilters(name, field, fieldDataSource, this.setBooleanFilter)
                 );
 
@@ -144,13 +144,13 @@ class ServerFilter extends React.Component {
             );
         }
 
-        if (field.type === "simplestring"){
+        if (field.type === "simplestring") {
             const fieldDataSource = getFieldDataSource(field, false);
 
             filterElement = buildStringInputFilters(
                 fieldName, field, fieldDataSource, this.setStringInputFilter
             );
-        }   
+        }
 
         if (field.type === "multiselect") {
             const fieldDataSource = getFieldDataSource(field, true);
@@ -158,29 +158,29 @@ class ServerFilter extends React.Component {
             filterElement = buildMultiSelectFilters(fieldName, field, fieldDataSource, this.setMultiSelectFilter);
         }
 
-        if (field.type === "number"){
+        if (field.type === "number") {
             const fieldDataSource = getFieldDataSource(field, false);
 
             filterElement = buildNumberFilters(fieldName, field, fieldDataSource, this.setNumberFilter);
         }
 
-        if (field.type === "bool"){
+        if (field.type === "bool") {
             const fieldDataSource = getFieldDataSource(field, false);
 
             filterElement = buildBooleanFilters(fieldName, field, fieldDataSource, this.setBooleanFilter);
         }
-        
-        if (field.type === "date"){
+
+        if (field.type === "date") {
             const fieldDataSource = getFieldDataSource(field, false);
 
             filterElement = buildDateFilters(fieldName, field, fieldDataSource, this.setDateFilter);
         }
 
         let { filtersContent } = this.state;
-        
+
         if (filtersContent.has(fieldName) && remove)
-           filtersContent.delete(fieldName);
-        else{
+            filtersContent.delete(fieldName);
+        else {
             filtersContent.set(fieldName, filterElement);
         }
 
@@ -238,9 +238,9 @@ class ServerFilter extends React.Component {
 
         const actualValues = values.map(val => stringValues[val]);
 
-        if (!actualValues || actualValues.length === 0) 
+        if (!actualValues || actualValues.length === 0)
             clientFilterBy.delete(key);
-        else 
+        else
             clientFilterBy.set(key, actualValues);
 
         this.setState({
@@ -280,12 +280,12 @@ class ServerFilter extends React.Component {
 
         const filterByClone = clientFilterBy;
 
-        if (filterByClone.has(name)) 
+        if (filterByClone.has(name))
             filterByClone.delete(name);
 
         this.setState((state, props) => {
-            return { 
-                visibleFilters, 
+            return {
+                visibleFilters,
                 clientFilterBy: filterByClone
             };
         });
@@ -300,20 +300,20 @@ class ServerFilter extends React.Component {
         const fieldCheckBoxes = filteredFields.map(key => {
 
             return (
-                    <Checkbox
-                        name={key}
-                        key={`${key}-filter-selection`}
-                        checked={this.state.visibleFilters.get(key)}
-                        onChange={this.toggleFilterSelection}>
-                        {getFieldUIName(this.props.dataFields[key])}
-                    </Checkbox>    
+                <Checkbox
+                    name={key}
+                    key={`${key}-filter-selection`}
+                    checked={this.state.visibleFilters.get(key)}
+                    onChange={this.toggleFilterSelection}>
+                    {getFieldUIName(this.props.dataFields[key])}
+                </Checkbox>
             );
         });
 
 
-        return <div style={{display:'flex', flexDirection:'column', alignItems: 'flex-start' }}>
-                    {fieldCheckBoxes}
-                </div>;
+        return <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            {fieldCheckBoxes}
+        </div>;
     }
 
     clearFilters = event => {
@@ -348,7 +348,7 @@ class ServerFilter extends React.Component {
 
     toggleDrawerVisibility = event => {
         this.setState((state, props) => {
-            return {filtersDrawerVisible: !state.filtersDrawerVisible}
+            return { filtersDrawerVisible: !state.filtersDrawerVisible }
         });
     };
 
@@ -400,18 +400,18 @@ class ServerFilter extends React.Component {
         const ServerFilterBy = this.mapFiltersToServer();
 
         this.setState((state, props) => {
-            return { 
-                ServerFilterBy, 
-                isFilterEnabled: true, 
-                isSearching: true 
+            return {
+                ServerFilterBy,
+                isFilterEnabled: true,
+                isSearching: true
             }
         });
 
         const result = await this.props.onPostFilters(ServerFilterBy);
 
         this.setState({
-             FilteredData: result, 
-             isSearching: false
+            FilteredData: result,
+            isSearching: false
         });
     };
 
@@ -419,11 +419,11 @@ class ServerFilter extends React.Component {
 
         const { ServerFilterBy, isSearching, dataSource, FilteredData } = this.state;
 
-        return ServerFilterBy.length > 0 
-                    ? isSearching 
-                        ? renderList(dataSource, true)
-                        : renderList(FilteredData, false)
-                    : renderList(dataSource, false);
+        return ServerFilterBy.length > 0
+            ? isSearching
+                ? renderList(dataSource, true)
+                : renderList(FilteredData, false)
+            : renderList(dataSource, false);
     }
 
     render() {
@@ -444,28 +444,29 @@ class ServerFilter extends React.Component {
 
                     <div className="filter-controls">
                         <div className="filter-controls-left">
-                            {withFilterPicker && <div className="filter-picker">
-                                <Tooltip placement="topRight" title="Filters">
-                                    <Button
-                                        style={{ margin: "0.3em" }}
-                                        type={"primary"}
-                                        shape="circle"
-                                        onClick={this.toggleDrawerVisibility}>
-                                        <FontAwesomeIcon icon={faSlidersH} />
-                                    </Button>
-                                </Tooltip>  
-                                {!autoBuildFilters && (
-                                    <Popover
-                                        style={{outline:'none'}}
-                                        placement={'bottom'}
-                                        trigger={['click', 'hover']} 
-                                        content={this.filterSelectionContent()}>
-                                        <Button type="circle" style={{outline:'none'}}>
-                                            <Icon type="down" />
-                                        </Button>   
-                                    </Popover>                      
-                                )}
-                            </div>}
+                            {withFilterPicker &&
+                                <div className="filter-picker">
+                                    <Tooltip placement="topRight" title="Filters">
+                                        <Button
+                                            style={{ margin: "0.3em" }}
+                                            type={"primary"}
+                                            shape="circle"
+                                            onClick={this.toggleDrawerVisibility}>
+                                            <FontAwesomeIcon icon={faSlidersH} />
+                                        </Button>
+                                    </Tooltip>
+                                    {!autoBuildFilters && (
+                                        <Popover
+                                            style={{ outline: 'none' }}
+                                            placement={'bottom'}
+                                            trigger={['click', 'hover']}
+                                            content={this.filterSelectionContent()}>
+                                            <Button type="circle" style={{ outline: 'none' }}>
+                                                <Icon type="down" />
+                                            </Button>
+                                        </Popover>
+                                    )}
+                                </div>}
                             {this.state.isFilterEnabled && (
                                 <Button
                                     onClick={this.clearFilters}
@@ -479,8 +480,8 @@ class ServerFilter extends React.Component {
                         <div className="filter-controls-right">
                             <SearchAllBar
                                 clearText={this.state.isFilterEnabled &&
-                                           this.state.ServerFilterBy[0] &&
-                                           this.state.ServerFilterBy[0].Name !== "ALL"}
+                                    this.state.ServerFilterBy[0] &&
+                                    this.state.ServerFilterBy[0].Name !== "ALL"}
                                 onSearch={this.onSearchAllServer}
                             />
                         </div>

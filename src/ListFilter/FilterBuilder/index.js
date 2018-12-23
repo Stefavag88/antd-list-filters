@@ -1,6 +1,6 @@
 import React from 'react';
 import {Select} from 'antd';
-import { getFieldUIName, getDateFieldFormat, getFieldNullValueReplacement, getFieldDataSource } from '../FieldHelper';
+import { getFieldUIName, getDateFieldFormat } from '../FieldHelper';
 import NumberFilter from '../Components/NumberFilter/index';
 import BooleanFilter from '../Components/BooleanFilter/index';
 import DateFilter from '../Components/DateFilter/index';
