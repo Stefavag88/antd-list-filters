@@ -22,7 +22,6 @@ class NumberFilter extends React.Component {
 
     handleChange = (value) => {
 
-        console.log(value);
         if (typeof value === 'string') {
             this.setState((state, props) => {
                 return { operator: value }

@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Drawer, Popover, Icon, Card, Button, Checkbox, Tooltip } from "antd";
-import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
+import { faFilter, faListUl } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SearchAllBar from "../Components/SearchAllBar";
 import { getFieldKey, getFieldType, getFieldUIName, getFieldDataSource } from "../FieldHelper";
@@ -33,6 +33,12 @@ class ServerFilter extends React.Component {
             this.autoBuildFilterContent();
     };
 
+    resetDataSource = () => {
+        this.setState((state, props) => {
+            return { dataSource: props.dataSource };
+        });
+    };
+
     mapFiltersToServer = () => {
         let serverFilters = [];
 
@@ -50,12 +56,6 @@ class ServerFilter extends React.Component {
         return serverFilters;
     };
 
-    resetDataSource = () => {
-        this.setState((state, props) => {
-            return { dataSource: props.dataSource };
-        });
-    };
-
     discardExcludedFields = fieldNames => {
         let fieldNamesExcluded = [...fieldNames];
 
@@ -70,7 +70,7 @@ class ServerFilter extends React.Component {
         return fieldNamesExcluded;
     };
 
-    getFiltersToBuild = () => {
+    decideFiltersToBuild = () => {
         const { dataSource } = this.props;
         const { visibleFilters } = this.state;
 
@@ -84,15 +84,14 @@ class ServerFilter extends React.Component {
 
     autoBuildFilterContent = () => {
         const { dataFields } = this.props;
-        const filtersToBuild = this.getFiltersToBuild();
+        const filtersToBuild = this.decideFiltersToBuild();
 
         let filtersContent = new Map();
 
         filtersToBuild.forEach(name => {
-            let fieldDataSource = getFieldDataSource(dataFields[name]);
-
             const field = dataFields[name];
-
+            const fieldDataSource = getFieldDataSource(dataFields[name]);
+            
             if (field.type === "autocomplete") {
                 filtersContent.set(name,
                     buildAutocompleteFilters(name, field, fieldDataSource, this.setStringInputFilter)
@@ -131,7 +130,7 @@ class ServerFilter extends React.Component {
         });
     };
 
-    manualBuildFilterContent = (fieldName, remove = false) => {
+    manualBuildFilterContent = (fieldName) => {
         const { dataFields } = this.props;
         const field = dataFields[fieldName];
         let filterElement;
@@ -178,11 +177,10 @@ class ServerFilter extends React.Component {
 
         let { filtersContent } = this.state;
 
-        if (filtersContent.has(fieldName) && remove)
+        if (filtersContent.has(fieldName))
             filtersContent.delete(fieldName);
-        else {
+        else 
             filtersContent.set(fieldName, filterElement);
-        }
 
         this.setState((state, props) => {
             return { filtersContent };
@@ -191,13 +189,13 @@ class ServerFilter extends React.Component {
 
     setDateFilter = ({ operator, date }, name) => {
         const { clientFilterBy } = this.state;
-
         const key = getFieldKey(this.props.dataFields, name);
-
         const value = `${operator} ${date}`;
 
-        if (!date) clientFilterBy.delete(key);
-        else clientFilterBy.set(key, value);
+        if (!date) 
+            clientFilterBy.delete(key);
+        else 
+            clientFilterBy.set(key, value);
 
         this.setState({
             clientFilterBy
@@ -206,13 +204,13 @@ class ServerFilter extends React.Component {
 
     setNumberFilter = ({ operator, number }, name) => {
         const { clientFilterBy } = this.state;
-
         const key = getFieldKey(this.props.dataFields, name);
-
         const value = `${operator} ${number}`;
 
-        if (!number) clientFilterBy.delete(key);
-        else clientFilterBy.set(key, value);
+        if (!number) 
+            clientFilterBy.delete(key);
+        else 
+            clientFilterBy.set(key, value);
 
         this.setState({
             clientFilterBy
@@ -223,8 +221,10 @@ class ServerFilter extends React.Component {
         const { clientFilterBy } = this.state;
         const key = getFieldKey(this.props.dataFields, name);
 
-        if (!value) clientFilterBy.delete(key);
-        else clientFilterBy.set(key, value);
+        if (!value) 
+            clientFilterBy.delete(key);
+        else 
+            clientFilterBy.set(key, value);
 
         this.setState({
             clientFilterBy
@@ -233,9 +233,7 @@ class ServerFilter extends React.Component {
 
     setMultiSelectFilter = ({ values }, name, stringValues) => {
         const { clientFilterBy } = this.state;
-
         const key = getFieldKey(this.props.dataFields, name);
-
         const actualValues = values.map(val => stringValues[val]);
 
         if (!actualValues || actualValues.length === 0)
@@ -250,11 +248,12 @@ class ServerFilter extends React.Component {
 
     setBooleanFilter = ({ value }, name) => {
         const { clientFilterBy } = this.state;
-
         const key = getFieldKey(this.props.dataFields, name);
 
-        if (!value || value === " - ") clientFilterBy.delete(key);
-        else clientFilterBy.set(key, value);
+        if (!value || value === " - ") 
+            clientFilterBy.delete(key);
+        else 
+            clientFilterBy.set(key, value);
 
         this.setState({
             clientFilterBy
@@ -271,9 +270,7 @@ class ServerFilter extends React.Component {
     };
 
     toggleFilterSelection = e => {
-
         const { name, checked } = e.target;
-
         let { visibleFilters, clientFilterBy } = this.state;
 
         visibleFilters.set(name, checked);
@@ -290,7 +287,7 @@ class ServerFilter extends React.Component {
             };
         });
 
-        this.manualBuildFilterContent(name, true);
+        this.manualBuildFilterContent(name);
     };
 
     filterSelectionContent = () => {
@@ -309,7 +306,6 @@ class ServerFilter extends React.Component {
                 </Checkbox>
             );
         });
-
 
         return <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
             {fieldCheckBoxes}
@@ -332,7 +328,7 @@ class ServerFilter extends React.Component {
 
     showFiltersInDrawer = () => {
         let filterElements = [];
-        console.log("showFiltersInDrawer!!!", this.state.filtersContent);
+
         for (const value of this.state.filtersContent.values()) {
             filterElements.push(value);
         }
@@ -446,24 +442,25 @@ class ServerFilter extends React.Component {
                         <div className="filter-controls-left">
                             {withFilterPicker &&
                                 <div className="filter-picker">
-                                    <Tooltip placement="topRight" title="Filters">
+                                    <Tooltip placement="left" title={`${this.state.filtersDrawerVisible ? 'Hide' : 'Show'} Filters`}>
                                         <Button
                                             style={{ margin: "0.3em" }}
                                             type={"primary"}
                                             shape="circle"
                                             onClick={this.toggleDrawerVisibility}>
-                                            <FontAwesomeIcon icon={faSlidersH} />
+                                            <FontAwesomeIcon icon={faFilter} />
                                         </Button>
                                     </Tooltip>
                                     {!autoBuildFilters && (
                                         <Popover
-                                            style={{ outline: 'none' }}
                                             placement={'bottom'}
-                                            trigger={['click', 'hover']}
+                                            trigger='hover'
                                             content={this.filterSelectionContent()}>
-                                            <Button type="circle" style={{ outline: 'none' }}>
-                                                <Icon type="down" />
-                                            </Button>
+                                            <Tooltip placement="right" title="Available Filters">
+                                                <Button type="circle">
+                                                    <FontAwesomeIcon icon={faListUl} />
+                                                </Button>
+                                            </Tooltip>
                                         </Popover>
                                     )}
                                 </div>}
@@ -473,7 +470,7 @@ class ServerFilter extends React.Component {
                                     style={{ margin: "0.3em" }}
                                     type="danger"
                                     icon="close">
-                                    Clear Filters
+                                    Clear
                                 </Button>
                             )}
                         </div>
@@ -486,9 +483,6 @@ class ServerFilter extends React.Component {
                             />
                         </div>
                     </div>
-                    {/* <div className="tag-manager">
-                        {this.manageFiltersTags()}
-                    </div> */}
                 </Card>
                 {this.renderListComponent(renderList)}
             </div>

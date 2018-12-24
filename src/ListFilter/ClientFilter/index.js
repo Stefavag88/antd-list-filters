@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Drawer, Popover, Card, Button, Checkbox, Tooltip, Icon } from "antd";
 import { prepareFilterQuery, applyFilters } from "../QueryBuilder";
-import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
+import { faFilter, faListUl } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SearchAllBar from "../Components/SearchAllBar";
 import { getFieldKey, getFieldUIName, getFieldDataSource } from "../FieldHelper";
@@ -14,7 +14,6 @@ class ListFilter extends React.Component {
         super(props);
 
         this.state = {
-            IsBusy: true,
             isFilterEnabled: false,
             dataSource: this.props.dataSource,
             clientFilterBy: new Map(),
@@ -41,7 +40,7 @@ class ListFilter extends React.Component {
 
     sendFilterQuery = e => {
         let { clientFilterBy } = this.state;
-        console.log("FILTERS APPLIED!", clientFilterBy);
+
         if (!clientFilterBy) return;
 
         if (clientFilterBy.size === 0) {
@@ -76,21 +75,18 @@ class ListFilter extends React.Component {
     };
 
     decideFiltersToBuild = () => {
-        const {dataSource} = this.props;
-        const {visibleFilters} = this.state;
-        let filtersToBuild = [];
+        const { dataSource } = this.props;
+        const { visibleFilters } = this.state;
 
-        if(visibleFilters.size > 0){
-            filtersToBuild = Array.from(visibleFilters.keys());
-        }else{
+        if (visibleFilters.size > 0) {
+            return Array.from(visibleFilters.keys());
+        } else {
             const allfieldNames = Object.keys(dataSource[0]);
-            filtersToBuild = this.discardExcludedFields(allfieldNames);
+            return this.discardExcludedFields(allfieldNames);
         }
-
-        return filtersToBuild;
     }
 
-    autoBuildFilterContent = (clearFields = false) => {
+    autoBuildFilterContent = () => {
         const { dataFields, dataSource } = this.props;
         const filtersToBuild = this.decideFiltersToBuild();
         
@@ -101,7 +97,7 @@ class ListFilter extends React.Component {
 
             if (field.type === "autocomplete") {
                 filtersContent.set(name,
-                    buildAutocompleteFilters(name, field, fieldDataSource, this.setStringInputFilter, clearFields)
+                    buildAutocompleteFilters(name, field, fieldDataSource, this.setStringInputFilter)
                 );
             }
 
@@ -145,7 +141,6 @@ class ListFilter extends React.Component {
         let filterElement;
         const fieldDataSource = getFieldDataSource(field) || generateFieldDataSourceValues(dataSource, fieldName);
 
-        console.log("PASSED DATASOURCE FOR BUILD...", fieldDataSource);
         if (field.type === "autocomplete")
             filterElement = buildAutocompleteFilters(fieldName, field, fieldDataSource, this.setStringInputFilter);
 
@@ -266,10 +261,14 @@ class ListFilter extends React.Component {
 
         const filterByClone = clientFilterBy;
 
-        if (filterByClone.has(name)) filterByClone.delete(name);
+        if (filterByClone.has(name)) 
+            filterByClone.delete(name);
 
         this.setState((state, props) => {
-            return { visibleFilters, clientFilterBy: filterByClone };
+            return { 
+                visibleFilters, 
+                clientFilterBy: filterByClone 
+            };
         });
 
         this.manualBuildFilterContent(name);
@@ -281,14 +280,15 @@ class ListFilter extends React.Component {
 
         const fieldCheckBoxes = filteredFields.map(key => {
 
-            return <Checkbox
-                name={key}
-                key={`${key}-filter-selection`}
-                checked={this.state.visibleFilters.get(key)}
-                onChange={this.toggleFilterSelection}
-            >
-                {getFieldUIName(this.props.dataFields[key])}
-            </Checkbox>
+            return (
+                <Checkbox
+                    name={key}
+                    key={`${key}-filter-selection`}
+                    checked={this.state.visibleFilters.get(key)}
+                    onChange={this.toggleFilterSelection}>
+                    {getFieldUIName(this.props.dataFields[key])}
+                </Checkbox>
+            );
         });
 
         return <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
@@ -302,8 +302,6 @@ class ListFilter extends React.Component {
             return {
                 isFilterEnabled: false,
                 dataSource: props.dataSource,
-                ServerFilterBy: [],
-                FilteredData: [],
                 clientFilterBy: new Map(),
                 filtersContent: new Map()
             };
@@ -311,7 +309,6 @@ class ListFilter extends React.Component {
     };
 
     showFiltersInDrawer = () => {
-
         let filterElements = [];
 
         for (const value of this.state.filtersContent.values()) {
@@ -388,40 +385,44 @@ class ListFilter extends React.Component {
                         mask={false}
                         onClose={this.closeFiltersDrawer}
                         visible={this.state.filtersDrawerVisible}>
-                        <div className="filters-content">{this.showFiltersInDrawer()}</div>
+                        <div className="filters-content">
+                            {this.showFiltersInDrawer()}
+                        </div>
                     </Drawer>
 
                     <div className="filter-controls">
-                        <div className="filter-controls-left">
-                            {withFilterPicker && <div className="filter-picker">
-                                <Tooltip placement="topRight" title="Filters">
-                                    <Button
-                                        style={{ margin: "0.3em" }}
-                                        type={"primary"}
-                                        shape="circle"
-                                        onClick={this.toggleDrawerVisibility}>
-                                        <FontAwesomeIcon icon={faSlidersH} />
-                                    </Button>
-                                </Tooltip>
-                                {!autoBuildFilters && (
-                                    <Popover
-                                        style={{ outline: 'none' }}
-                                        placement={'bottom'}
-                                        trigger={['click', 'hover']}
-                                        content={this.filterSelectionContent()}>
-                                        <Button type="circle">
-                                            <Icon type="down" />
+                    <div className="filter-controls-left">
+                            {withFilterPicker &&
+                                <div className="filter-picker">
+                                    <Tooltip placement="left" title={`${this.state.filtersDrawerVisible ? 'Hide' : 'Show'} Filters`}>
+                                        <Button
+                                            style={{ margin: "0.3em" }}
+                                            type={"primary"}
+                                            shape="circle"
+                                            onClick={this.toggleDrawerVisibility}>
+                                            <FontAwesomeIcon icon={faFilter} />
                                         </Button>
-                                    </Popover>
-                                )}
-                            </div>}
+                                    </Tooltip>
+                                    {!autoBuildFilters && (
+                                        <Popover
+                                            placement={'bottom'}
+                                            trigger='hover'
+                                            content={this.filterSelectionContent()}>
+                                            <Tooltip placement="right" title="Available Filters">
+                                                <Button type="circle">
+                                                    <FontAwesomeIcon icon={faListUl} />
+                                                </Button>
+                                            </Tooltip>
+                                        </Popover>
+                                    )}
+                                </div>}
                             {this.state.isFilterEnabled && (
                                 <Button
                                     onClick={this.clearFilters}
                                     style={{ margin: "0.3em" }}
                                     type="danger"
                                     icon="close">
-                                    Clear Filters
+                                    Clear
                                 </Button>
                             )}
                         </div>

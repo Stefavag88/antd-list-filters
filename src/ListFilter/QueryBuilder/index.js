@@ -44,10 +44,7 @@ export const prepareFilterQuery = (props, state) => {
     let { clientFilterBy } = state;
     let queryString = "( ";
 
-    for (const entry of clientFilterBy.entries()) {
-
-        console.log("ENTRY!", entry);
-        let [key, val] = entry;
+    for (const [key,val] of clientFilterBy.entries()) {
 
         if (queryString.length > 2)
             queryString += " and (";

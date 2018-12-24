@@ -1,7 +1,5 @@
 export const getFieldUIName = (fieldName) => {
 
-    console.log("FIELDNAME!!", fieldName);
-
     const uiName = fieldName.uiName;
 
     if (!uiName)
