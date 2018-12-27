@@ -23,11 +23,11 @@ class DateFilter extends React.Component {
         this.dateRef = React.createRef();
     }
 
-    componentDidUpdate = (prevProps, prevState) => {
+    componentDidUpdate(prevProps, prevState){
         this.props.onChange(this.state)
     }
 
-    handleChange = (value) => {
+    handleChange(value){
 
         if (typeof value === 'string') {
             this.setState((state, props) => {
@@ -55,7 +55,7 @@ class DateFilter extends React.Component {
         }
     }
 
-    renderDatePicker = () => {
+    renderDatePicker(){
         if (this.state.operator === 'in') {
             return <DatePicker.RangePicker
                 ref={this.dateRef}

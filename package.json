@@ -1,7 +1,7 @@
 {
   "name": "ant-list-filter",
-  "version": "0.1.1",
-  "main":"src/index.js",
+  "version": "0.1.2",
+  "main":"src/ListFilter/index.js",
   "private": false,
   "peerDependencies": {
     "react": ">=16.0.0",

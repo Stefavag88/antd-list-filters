@@ -23,20 +23,20 @@ class ListFilter extends React.Component {
         this.inputSearchRef = React.createRef();
     }
 
-    componentDidMount = () => {
+    componentDidMount(){
         const { autoBuildFilters } = this.props;
 
         if (autoBuildFilters)
             this.autoBuildFilterContent();
     };
 
-    resetDataSource = () => {
+    resetDataSource(){
         this.setState((state, props) => {
             return { dataSource: props.dataSource };
         });
     };
 
-    sendFilterQuery = e => {
+    sendFilterQuery(e){
         let { clientFilterBy } = this.state;
 
         if (!clientFilterBy) return;
@@ -58,7 +58,7 @@ class ListFilter extends React.Component {
         });
     };
 
-    discardExcludedFields = fieldNames => {
+    discardExcludedFields(fieldNames){
         let fieldNamesExcluded = [...fieldNames];
 
         const { excludeFields } = this.props;
@@ -72,7 +72,7 @@ class ListFilter extends React.Component {
         return fieldNamesExcluded;
     };
 
-    decideFiltersToBuild = () => {
+    decideFiltersToBuild(){
         const { dataSource } = this.props;
         const { visibleFilters } = this.state;
 
@@ -84,7 +84,7 @@ class ListFilter extends React.Component {
         }
     }
 
-    autoBuildFilterContent = () => {
+    autoBuildFilterContent(){
         const { dataFields, dataSource } = this.props;
         const filtersToBuild = this.decideFiltersToBuild();
         
@@ -131,7 +131,7 @@ class ListFilter extends React.Component {
         });
     };
 
-    manualBuildFilterContent = fieldName => {
+    manualBuildFilterContent(fieldName){
         const { dataFields, dataSource } = this.props;
 
         const field = dataFields[fieldName];
@@ -169,7 +169,7 @@ class ListFilter extends React.Component {
         });
     };
 
-    setDateFilter = ({ operator, date }, name) => {
+    setDateFilter({ operator, date }, name){
         const { clientFilterBy } = this.state;
         const key = getFieldKey(this.props.dataFields, name);
         const value = `${operator} ${date}`;
@@ -184,7 +184,7 @@ class ListFilter extends React.Component {
         });
     };
 
-    setNumberFilter = ({ operator, number }, name) => {
+    setNumberFilter({ operator, number }, name){
         const { clientFilterBy } = this.state;
         const key = getFieldKey(this.props.dataFields, name);
         const value = `${operator} ${number}`;
@@ -199,7 +199,7 @@ class ListFilter extends React.Component {
         });
     };
 
-    setStringInputFilter = ({ value }, name) => {
+    setStringInputFilter({ value }, name){
         const { clientFilterBy } = this.state;
         const key = getFieldKey(this.props.dataFields, name);
 
@@ -213,7 +213,7 @@ class ListFilter extends React.Component {
         });
     };
 
-    setMultiSelectFilter = ({ values }, name, stringValues) => {
+    setMultiSelectFilter({ values }, name, stringValues){
         const { clientFilterBy } = this.state;
         const key = getFieldKey(this.props.dataFields, name);
         const actualValues = values.map(val => stringValues[val]);
@@ -228,7 +228,7 @@ class ListFilter extends React.Component {
         });
     };
 
-    setBooleanFilter = ({ value }, name) => {
+    setBooleanFilter({ value }, name){
         const { clientFilterBy } = this.state;
         const key = getFieldKey(this.props.dataFields, name);
 
@@ -243,7 +243,7 @@ class ListFilter extends React.Component {
     };
 
 
-    closeFiltersDrawer = () => {
+    closeFiltersDrawer(){
         this.setState((state, props) => {
             return {
                 filtersDrawerVisible: false
@@ -251,7 +251,7 @@ class ListFilter extends React.Component {
         });
     };
 
-    toggleFilterSelection = e => {
+    toggleFilterSelection(e){
         const { name, checked } = e.target;
         let { visibleFilters, clientFilterBy } = this.state;
 
@@ -272,7 +272,7 @@ class ListFilter extends React.Component {
         this.manualBuildFilterContent(name);
     };
 
-    filterSelectionContent = () => {
+    filterSelectionContent(){
         const allfields = Object.keys(this.props.dataSource[0]);
         const filteredFields = this.discardExcludedFields(allfields);
 
@@ -294,7 +294,7 @@ class ListFilter extends React.Component {
         </div>;
     }
 
-    clearFilters = event => {
+    clearFilters(event){
 
         this.setState((state, props) => {
             return {
@@ -306,7 +306,7 @@ class ListFilter extends React.Component {
         }, this.autoBuildFilterContent);
     };
 
-    showFiltersInDrawer = () => {
+    showFiltersInDrawer(){
         let filterElements = [];
 
         for (const value of this.state.filtersContent.values()) {
@@ -322,14 +322,14 @@ class ListFilter extends React.Component {
         return filterElements;
     };
 
-    toggleDrawerVisibility = event => {
+    toggleDrawerVisibility(event){
         this.setState((state, props) => {
             return { filtersDrawerVisible: !state.filtersDrawerVisible }
         });
     };
 
 
-    onSearchAllClient = e => {
+    onSearchAllClient(e){
         let matched = [];
 
         if (e.length === 0) {
@@ -358,7 +358,7 @@ class ListFilter extends React.Component {
         });
     };
 
-    buildSenderButton = () => {
+    buildSenderButton(){
 
         return (
             <Button
