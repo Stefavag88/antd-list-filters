@@ -1,15 +1,18 @@
 {
   "name": "ant-list-filter",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.1.1",
+  "main":"src/index.js",
+  "private": false,
+  "peerDependencies": {
+    "react": ">=16.0.0",
+    "react-dom": ">=16.0.0",
+    "antd": ">=3.0.0"
+  },
   "dependencies": {
-    "antd": "^3.10.5",
     "date-fns": "^1.30.1",
     "expr-eval": "^1.2.2",
     "prop-types": "^15.6.2",
-    "react": "^16.6.1",
     "react-app-rewired": "^1.6.2",
-    "react-dom": "^16.6.1",
     "react-scripts": "2.1.1"
   },
   "scripts": {
