@@ -16,8 +16,8 @@
     "react-scripts": "2.1.1"
   },
   "scripts": {
-    "start": "react-app-rewired start example",
-    "build": "react-app-rewired build rm -rf dist && NODE_ENV=production babel src/ListFilter --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,__snapshots__",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject"
   },
