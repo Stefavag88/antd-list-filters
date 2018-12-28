@@ -16,11 +16,11 @@ class NumberFilter extends React.Component {
         }
     }
 
-    componentDidUpdate(prevProps, prevState){
+    componentDidUpdate = (prevProps, prevState) => {
         this.props.onChange(this.state)
     }
 
-    handleChange(value){
+    handleChange = (value) => {
 
         if (typeof value === 'string') {
             this.setState((state, props) => {

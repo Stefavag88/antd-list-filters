@@ -10,11 +10,11 @@ class SearchAllBar extends Component {
         this.inputRef = React.createRef();
     }
 
-    innerOnSearch(event){
+    innerOnSearch = (event) => {
         this.props.onSearch(event);
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot){
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
 
         if(this.props.clearText && !prevProps.clearText)
             this.inputRef.current.input.input.value = null

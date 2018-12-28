@@ -14,11 +14,11 @@ class StringInputFilter extends React.Component {
         }
     }
 
-    componentDidUpdate(prevProps, prevState){
+    componentDidUpdate = (prevProps, prevState) => {
         this.props.onChange(this.state);
     }
 
-    handleChange(event){
+    handleChange = (event) => {
 
         const {value} = event.target; 
 

@@ -12,11 +12,11 @@ class MultiSelectFilter extends React.Component {
         }
     }
 
-    componentDidUpdate(prevProps, prevState){
+    componentDidUpdate = (prevProps, prevState) => {
         this.props.onChange(this.state)
     }
 
-    handleChange(values){
+    handleChange = (values) => {
         this.setState((state, props) => {
             return { values }
         });

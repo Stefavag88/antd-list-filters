@@ -14,11 +14,11 @@ class AutoCompleteFilter extends React.Component {
         }
     }
 
-    componentDidUpdate(prevProps, prevState){
+    componentDidUpdate = (prevProps, prevState) => {
         this.props.onChange(this.state);
     }
 
-    handleChange(value){
+    handleChange = (value) => {
         
         this.setState((state, props) => {
             return { value }
