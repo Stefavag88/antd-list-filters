@@ -456,7 +456,7 @@ class ServerFilter extends React.Component {
                                             content={this.filterSelectionContent()}>
                                             <Tooltip placement="right" title="Available Filters">
                                                 <Button type="circle">
-                                                    <Icon icon="bars" />
+                                                    <Icon type="bars" />
                                                 </Button>
                                             </Tooltip>
                                         </Popover>
