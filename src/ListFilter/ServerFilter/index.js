@@ -1,6 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Drawer, Popover, Icon, Card, Button, Checkbox, Tooltip } from "antd";
+import Drawer from "antd/lib/drawer";
+import Popover from "antd/lib/popover";
+import Button from "antd/lib/button";
+import Card from "antd/lib/card";
+import Checkbox from "antd/lib/checkbox";
+import Tooltip from "antd/lib/tooltip";
+import Icon from "antd/lib/icon";
 import SearchAllBar from "../Components/SearchAllBar";
 import { getFieldKey, getFieldType, getFieldUIName, getFieldDataSource } from "../FieldHelper";
 import { buildBooleanFilters, buildAutocompleteFilters, buildDateFilters, buildMultiSelectFilters, buildNumberFilters, buildStringInputFilters } from '../FilterBuilder';
