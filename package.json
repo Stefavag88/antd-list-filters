@@ -31,6 +31,9 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "babel-plugin-import": "^1.11.0"
+    "babel-plugin-import": "^1.11.0", 
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
+    "antd": "^3.11.6"
   }
 }
