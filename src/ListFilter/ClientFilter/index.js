@@ -2,8 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Drawer, Popover, Card, Button, Checkbox, Tooltip, Icon } from "antd";
 import { prepareFilterQuery, applyFilters } from "../QueryBuilder";
-import { faFilter, faListUl } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SearchAllBar from "../Components/SearchAllBar";
 import { getFieldKey, getFieldUIName, getFieldDataSource } from "../FieldHelper";
 import { buildBooleanFilters, buildAutocompleteFilters, buildDateFilters, buildMultiSelectFilters, buildNumberFilters, buildStringInputFilters } from '../FilterBuilder';
@@ -400,7 +398,7 @@ class ListFilter extends React.Component {
                                             type={"primary"}
                                             shape="circle"
                                             onClick={this.toggleDrawerVisibility}>
-                                            <FontAwesomeIcon icon={faFilter} />
+                                            <Icon type="filter" />
                                         </Button>
                                     </Tooltip>
                                     {!autoBuildFilters && (
@@ -410,7 +408,7 @@ class ListFilter extends React.Component {
                                             content={this.filterSelectionContent()}>
                                             <Tooltip placement="right" title="Available Filters">
                                                 <Button type="circle">
-                                                    <FontAwesomeIcon icon={faListUl} />
+                                                    <Icon type="bars" />
                                                 </Button>
                                             </Tooltip>
                                         </Popover>
