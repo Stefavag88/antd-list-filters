@@ -1,12 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import clientFilter from './lib/ClientFilter';
+import serverFilter from './lib/ServerFilter';
 import './index.css';
-import Example from './Example';
-import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(<Example />, document.getElementById('root'));
+export const ClientFilter = clientFilter;
+export const ServerFilter = serverFilter;
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: http://bit.ly/CRA-PWA
-serviceWorker.unregister();
+export default {
+    ClientFilter, 
+    ServerFilter
+}
+
+
