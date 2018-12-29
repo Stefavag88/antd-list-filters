@@ -1,44 +1,59 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+*This project is not yet published on npm*
 
-## Available Scripts
+# Description
 
-In the project directory, you can run:
+This is a component that creates and adds filtering functionality on your data.
 
-### `npm start`
+It works only with the [antd](https://github.com/ant-design/ant-design) UI Library and accepts an antd [List](https://ant.design/components/list/) or [Table](https://ant.design/components/table/) Component 
+as a render prop, on which it actually applies the filtering rules.
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+It then builds the filtering UI based on the [props](#common-props) and [fields](#fields-configuration) that you have specified. 
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+## Manual
 
-### `npm test`
+1. [How to configure the fields of your data.](#fields-configuration)
+2. [Client & Server filter components differences.](#client--server-filter-components)
+3. [Common props.](#common-props)
+4. [ClientFilter usage and component-specific props.](#clientfilter-props)
+5. [ServerFilter usage and component-specific props.](#serverfilter-props)
+6. [Example.](#example)
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+### Fields Configuration ###
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+In order to apply the filtering functionality you have to specify some information on each field of your data. 
+The configuration options are decribed below: 
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+Fields    | Accepted Values  | Notes  
+----------|------------------|-------
+type      |'simplestring', 'multiselect', 'autocomplete', 'number', 'date', bool' | Required
+uiName    | *The Name to display* | Required
+dataSource| *An array of values. If this is ommited, then the distinct values to choose from will be extracted from the actual data* | Required Field For Server Filtering.
+format    | *The date format of your dates* | Required for date fields only -has no use on other types. 
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+*The library will build a corresponding antd component based on the **type** that you have specified for each field*
 
-### `npm run eject`
+### Client & Server Filter Components ###
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+1. ClientFilter 
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+As its name implies, this component assumes that you have already got all of your data from the server and the filtering is applied client-side on that data.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+2. ServerFilter
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+This component accepts an extra prop called *onPostFilters* that has to return a Promise. That would usually be a *fetch* POST request that sends the contents of the applied filters on the specified endpoint and gets the response with the filtered data. More on this in [ServerFilter usage and component-specific props](#serverfilter-props#). section. 
 
-## Learn More
+### Common Props ###
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+ClientFilter and ServerFilter Components share the majority of their props, which are basically adding filtering functionality or setting rules on the to-be filtered fields. 
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Prop            |                              Description                          |      Type     |      Default     |
+----------------|-------------------------------------------------------------------|---------------|------------------|
+dataFields      | As described [above](#fields-configuration#)                      |object         |         -        |
+dataSource      | The data that will be rendered and filtered                       |array          |         -        |
+savedVisibleFilters| Filters that were applied and saved for user last time(optional)|array         |         -        |
+autoBuildFilters| Enable user to pick filters manually or build them automatically for all fields that are on the dataSource | bool | false
+withFilterPicker| Show filter picker or just use the search all bar at the top-right| bool          | true             |
+excludeFields   | Exclude fields that we do not want filtering on, or can't filter  | array         | -                |
+renderList      | Function with two parameters (dataSource, loading indicator) that renders a List or Table antd component. See [example](#example#) | func | -  
+
