@@ -32,6 +32,7 @@ import _DatePicker from 'antd/lib/date-picker';
 import fnsIsValid from 'date-fns/is_valid';
 import 'antd/lib/auto-complete/style';
 import _AutoComplete from 'antd/lib/auto-complete';
+import 'antd/dist/antd.css';
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
   try {
