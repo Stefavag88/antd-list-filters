@@ -1,18 +1,19 @@
 {
   "name": "ant-list-filter",
-  "version": "0.2.6",
+  "version": "0.2.8",
   "main": "dist/es/prod.js",
   "private": false,
-  "peerDependencies": {
-    "react": ">=16.0.0",
-    "react-dom": ">=16.0.0",
-    "antd": ">=3.0.0"
+  "author": {
+    "name": "Vangelis Stefanakis"
   },
-  "dependencies": {
-    "date-fns": "^1.30.1",
-    "prop-types": "^15.6.2",
-    "react-scripts": "^2.1.2",
-    "expr-eval": "^1.2.2"
+  "homepage": "https://github.com/Stefavag88/antd-list-filters#readme",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/Stefavag88/antd-list-filters.git"
+  },
+  "bugs": {
+    "url" : "https://github.com/Stefavag88/antd-list-filters/issues",
+    "email" : "stefanakisvag@gmail.com"  
   },
   "scripts": {
     "prepublishOnly": "npm run release",
@@ -20,12 +21,16 @@
     "build:prod": "cross-env NODE_ENV=production rollup -c",
     "build:dev": "cross-env NODE_ENV=development rollup -c"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
+  "peerDependencies": {
+    "react": ">=16.0.0",
+    "react-dom": ">=16.0.0",
+    "antd": ">=3.0.0",
+    "prop-types": ">=15.0.0"
+  },
+  "dependencies": {
+    "date-fns": "^1.30.1",
+    "expr-eval": "^1.2.2"
+  },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.2.3",
     "@babel/preset-env": "^7.2.3",
@@ -37,6 +42,7 @@
     "less": "^3.9.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
+    "prop-types": "^15.6.2",
     "rollup": "^1.0.0",
     "rollup-plugin-babel": "^4.1.0",
     "rollup-plugin-commonjs": "^9.2.0",
@@ -47,5 +53,12 @@
     "rollup-plugin-terser": "^3.0.0",
     "rollup-plugin-uglify": "^6.0.0",
     "terser": "^3.14.0-beta"
-  }
+  }, 
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "license": "MIT"
 }

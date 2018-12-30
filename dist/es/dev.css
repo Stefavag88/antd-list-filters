@@ -46,13 +46,6 @@
     display: flex;
     width:100%;
 }
-.index_ant-filter-container__1uYRH{
-    width: 100%
-}
-.index_filter-content__3jU-x{
-    display: flex;
-    width:100%;
-}
 .index_ant-filter-container__1iWAf{
     width: 100%
 }
@@ -64,4 +57,11 @@
 .index_filter-value__2ox7D{
     width:100%;
     margin-left:0.3em;
+}
+.index_ant-filter-container__1uYRH{
+    width: 100%
+}
+.index_filter-content__3jU-x{
+    display: flex;
+    width:100%;
 }
