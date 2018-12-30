@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Input } from 'antd';
 
 const Search = Input.Search;
 
-class SearchAllBar extends Component {
+class SearchAllBar extends React.Component {
     constructor(props) {
         super(props);
 

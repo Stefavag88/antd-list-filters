@@ -1,33 +1,64 @@
 {
   "name": "ant-list-filter",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "antd": "^3.10.5",
-    "date-fns": "^1.30.1",
-    "expr-eval": "^1.2.2",
-    "prop-types": "^15.6.2",
-    "react": "^16.6.1",
-    "react-app-rewired": "^1.6.2",
-    "react-dom": "^16.6.1",
-    "react-scripts": "2.1.1"
+  "version": "0.2.8",
+  "main": "dist/es/prod.js",
+  "private": false,
+  "author": {
+    "name": "Vangelis Stefanakis"
+  },
+  "homepage": "https://github.com/Stefavag88/antd-list-filters#readme",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/Stefavag88/antd-list-filters.git"
+  },
+  "bugs": {
+    "url" : "https://github.com/Stefavag88/antd-list-filters/issues",
+    "email" : "stefanakisvag@gmail.com"  
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
-    "eject": "react-app-rewired eject"
+    "prepublishOnly": "npm run release",
+    "release": "npm run build:dev && npm run build:prod",
+    "build:prod": "cross-env NODE_ENV=production rollup -c",
+    "build:dev": "cross-env NODE_ENV=development rollup -c"
   },
-  "eslintConfig": {
-    "extends": "react-app"
+  "peerDependencies": {
+    "react": ">=16.0.0",
+    "react-dom": ">=16.0.0",
+    "antd": ">=3.0.0",
+    "prop-types": ">=15.0.0"
   },
+  "dependencies": {
+    "date-fns": "^1.30.1",
+    "expr-eval": "^1.2.2"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.2.3",
+    "@babel/preset-env": "^7.2.3",
+    "@babel/preset-react": "^7.0.0",
+    "antd": "^3.11.6",
+    "babel-core": "^6.26.3",
+    "babel-plugin-import": "^1.11.0",
+    "cross-env": "^5.2.0",
+    "less": "^3.9.0",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
+    "prop-types": "^15.6.2",
+    "rollup": "^1.0.0",
+    "rollup-plugin-babel": "^4.1.0",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-node-resolve": "^4.0.0",
+    "rollup-plugin-peer-deps-external": "^2.2.0",
+    "rollup-plugin-postcss": "^1.6.3",
+    "rollup-plugin-replace": "^2.1.0",
+    "rollup-plugin-terser": "^3.0.0",
+    "rollup-plugin-uglify": "^6.0.0",
+    "terser": "^3.14.0-beta"
+  }, 
   "browserslist": [
     ">0.2%",
     "not dead",
     "not ie <= 11",
     "not op_mini all"
   ],
-  "devDependencies": {
-    "babel-plugin-import": "^1.11.0"
-  }
+  "license": "MIT"
 }

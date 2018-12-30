@@ -1,14 +1,14 @@
 import React from 'react';
 import { Select } from 'antd';
-import { PropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
 
-class BooleanFilter extends React.Component {
+class MultiSelectFilter extends React.Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
-            value: null
+            values: []
         }
     }
 
@@ -16,29 +16,28 @@ class BooleanFilter extends React.Component {
         this.props.onChange(this.state)
     }
 
-    handleChange = (value) => {
+    handleChange = (values) => {
         this.setState((state, props) => {
-            return { value }
+            return { values }
         });
     }
 
     render() {
 
-        const { name } = this.props;
+        const { name, dataSource } = this.props;
 
         return (
             <div className="ant-filter-container">
                 <span>{name}</span>
                 <div className="filter-content">
                     <Select
-                        style={{ minWidth: 200, width:'100%' }}
+                        style={{minWidth:200, width:'100%'}}
                         allowClear={true}
-                        key={name}
                         onChange={this.handleChange}
+                        mode="multiple"
+                        key={name}
                         placeholder={name}>
-                        <Select.Option key={true}>YES</Select.Option>
-                        <Select.Option key={false}>NO</Select.Option>
-                        <Select.Option key={' - '}> - </Select.Option>
+                        {dataSource}
                     </Select>
                 </div>
             </div>
@@ -46,9 +45,10 @@ class BooleanFilter extends React.Component {
     }
 }
 
-BooleanFilter.propTypes = {
+MultiSelectFilter.propTypes = {
     onChange: PropTypes.func.isRequired,
     name: PropTypes.string.isRequired,
+    dataSource: PropTypes.array
 }
 
-export default BooleanFilter;
+export default MultiSelectFilter;

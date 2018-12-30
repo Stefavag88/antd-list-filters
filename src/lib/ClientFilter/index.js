@@ -1,21 +1,20 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Drawer, Popover, Icon, Card, Button, Checkbox, Tooltip } from "antd";
+import {Drawer, Popover, Button, Card, Checkbox, Tooltip, Icon} from "antd"
+import { prepareFilterQuery, applyFilters } from "../QueryBuilder";
 import SearchAllBar from "../Components/SearchAllBar";
-import { getFieldKey, getFieldType, getFieldUIName, getFieldDataSource } from "../FieldHelper";
+import { getFieldKey, getFieldUIName, getFieldDataSource } from "../FieldHelper";
 import { buildBooleanFilters, buildAutocompleteFilters, buildDateFilters, buildMultiSelectFilters, buildNumberFilters, buildStringInputFilters } from '../FilterBuilder';
+import { generateFieldDataSourceValues } from './../FieldHelper/index';
 
-class ServerFilter extends React.Component {
+class ListFilter extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            isSearching: false,
             isFilterEnabled: false,
             dataSource: this.props.dataSource,
             clientFilterBy: new Map(),
-            ServerFilterBy: [],
-            FilteredData: [],
             visibleFilters: new Map(),
             filtersContent: new Map(),
             filtersDrawerVisible: false
@@ -37,21 +36,26 @@ class ServerFilter extends React.Component {
         });
     };
 
-    mapFiltersToServer = () => {
-        let serverFilters = [];
+    sendFilterQuery = e => {
+        let { clientFilterBy } = this.state;
 
-        for (let entry of this.state.clientFilterBy) {
-            const [key, value] = entry;
-            const field = this.props.dataFields[key];
+        if (!clientFilterBy) return;
 
-            const serverFilter = {
-                Name: key,
-                Type: getFieldType(field),
-                Values: Array.isArray(value) ? value : [value]
-            };
-            serverFilters.push(serverFilter);
+        if (clientFilterBy.size === 0) {
+            this.resetDataSource();
+
+            return;
         }
-        return serverFilters;
+
+        const filterQuery = prepareFilterQuery(this.props, this.state);
+        const newDataSource = applyFilters(this.props.dataSource, filterQuery);
+
+        this.setState((state, props) => {
+            return {
+                dataSource: newDataSource,
+                isFilterEnabled: true
+            };
+        });
     };
 
     discardExcludedFields = fieldNames => {
@@ -81,15 +85,14 @@ class ServerFilter extends React.Component {
     }
 
     autoBuildFilterContent = () => {
-        const { dataFields } = this.props;
+        const { dataFields, dataSource } = this.props;
         const filtersToBuild = this.decideFiltersToBuild();
-
+        
         let filtersContent = new Map();
-
         filtersToBuild.forEach(name => {
             const field = dataFields[name];
-            const fieldDataSource = getFieldDataSource(dataFields[name]);
-            
+            const fieldDataSource = getFieldDataSource(field) || generateFieldDataSourceValues(dataSource, name);
+
             if (field.type === "autocomplete") {
                 filtersContent.set(name,
                     buildAutocompleteFilters(name, field, fieldDataSource, this.setStringInputFilter)
@@ -128,56 +131,37 @@ class ServerFilter extends React.Component {
         });
     };
 
-    manualBuildFilterContent = (fieldName) => {
-        const { dataFields } = this.props;
+    manualBuildFilterContent = fieldName => {
+        const { dataFields, dataSource } = this.props;
+
         const field = dataFields[fieldName];
+
         let filterElement;
+        const fieldDataSource = getFieldDataSource(field) || generateFieldDataSourceValues(dataSource, fieldName);
 
-        if (field.type === "autocomplete") {
-            const fieldDataSource = getFieldDataSource(field, true);
+        if (field.type === "autocomplete")
+            filterElement = buildAutocompleteFilters(fieldName, field, fieldDataSource, this.setStringInputFilter);
 
-            filterElement = buildAutocompleteFilters(
-                fieldName, field, fieldDataSource, this.setStringInputFilter
-            );
-        }
+        if (field.type === "simplestring")
+            filterElement = buildStringInputFilters(fieldName, field, fieldDataSource, this.setStringInputFilter);
 
-        if (field.type === "simplestring") {
-            const fieldDataSource = getFieldDataSource(field, false);
-
-            filterElement = buildStringInputFilters(
-                fieldName, field, fieldDataSource, this.setStringInputFilter
-            );
-        }
-
-        if (field.type === "multiselect") {
-            const fieldDataSource = getFieldDataSource(field, true);
-
+        if (field.type === "multiselect")
             filterElement = buildMultiSelectFilters(fieldName, field, fieldDataSource, this.setMultiSelectFilter);
-        }
 
-        if (field.type === "number") {
-            const fieldDataSource = getFieldDataSource(field, false);
-
+        if (field.type === "number")
             filterElement = buildNumberFilters(fieldName, field, fieldDataSource, this.setNumberFilter);
-        }
 
-        if (field.type === "bool") {
-            const fieldDataSource = getFieldDataSource(field, false);
-
+        if (field.type === "bool")
             filterElement = buildBooleanFilters(fieldName, field, fieldDataSource, this.setBooleanFilter);
-        }
 
-        if (field.type === "date") {
-            const fieldDataSource = getFieldDataSource(field, false);
-
+        if (field.type === "date")
             filterElement = buildDateFilters(fieldName, field, fieldDataSource, this.setDateFilter);
-        }
 
         let { filtersContent } = this.state;
 
         if (filtersContent.has(fieldName))
             filtersContent.delete(fieldName);
-        else 
+        else
             filtersContent.set(fieldName, filterElement);
 
         this.setState((state, props) => {
@@ -190,9 +174,9 @@ class ServerFilter extends React.Component {
         const key = getFieldKey(this.props.dataFields, name);
         const value = `${operator} ${date}`;
 
-        if (!date) 
+        if (!date)
             clientFilterBy.delete(key);
-        else 
+        else
             clientFilterBy.set(key, value);
 
         this.setState({
@@ -205,9 +189,9 @@ class ServerFilter extends React.Component {
         const key = getFieldKey(this.props.dataFields, name);
         const value = `${operator} ${number}`;
 
-        if (!number) 
+        if (!number)
             clientFilterBy.delete(key);
-        else 
+        else
             clientFilterBy.set(key, value);
 
         this.setState({
@@ -219,9 +203,9 @@ class ServerFilter extends React.Component {
         const { clientFilterBy } = this.state;
         const key = getFieldKey(this.props.dataFields, name);
 
-        if (!value) 
+        if (!value)
             clientFilterBy.delete(key);
-        else 
+        else
             clientFilterBy.set(key, value);
 
         this.setState({
@@ -248,9 +232,9 @@ class ServerFilter extends React.Component {
         const { clientFilterBy } = this.state;
         const key = getFieldKey(this.props.dataFields, name);
 
-        if (!value || value === " - ") 
+        if (!value || value === " - ")
             clientFilterBy.delete(key);
-        else 
+        else
             clientFilterBy.set(key, value);
 
         this.setState({
@@ -275,13 +259,13 @@ class ServerFilter extends React.Component {
 
         const filterByClone = clientFilterBy;
 
-        if (filterByClone.has(name))
+        if (filterByClone.has(name)) 
             filterByClone.delete(name);
 
         this.setState((state, props) => {
-            return {
-                visibleFilters,
-                clientFilterBy: filterByClone
+            return { 
+                visibleFilters, 
+                clientFilterBy: filterByClone 
             };
         });
 
@@ -316,8 +300,6 @@ class ServerFilter extends React.Component {
             return {
                 isFilterEnabled: false,
                 dataSource: props.dataSource,
-                ServerFilterBy: [],
-                FilteredData: [],
                 clientFilterBy: new Map(),
                 filtersContent: new Map()
             };
@@ -346,79 +328,49 @@ class ServerFilter extends React.Component {
         });
     };
 
-    onSearchAllServer = async e => {
-        const ServerFilterBy = [
-            {
-                Name: "ALL",
-                Type: null,
-                Values: [e.toLowerCase()]
-            }
-        ];
+
+    onSearchAllClient = e => {
+        let matched = [];
+
+        if (e.length === 0) {
+            matched = this.props.dataSource;
+        } else {
+            matched = this.props.dataSource.filter(record => {
+                const stringValues = Object.values(record).map(v => "" + v);
+
+                const found = stringValues.some(val =>
+                    val.toLowerCase().includes(e.toLowerCase())
+                );
+
+                return found;
+            });
+        }
 
         this.setState((state, props) => {
             return {
-                ServerFilterBy,
+                dataSource: matched,
+                clientFilterBy: new Map(),
                 visibleFilters: props.savedVisibleFilters || new Map(),
                 filtersContent: new Map(),
                 filtersDrawerVisible: false,
-                isFilterEnabled: true,
-                isSearching: true
-            };
-        });
-
-        const result = await this.props.onPostFilters(ServerFilterBy);
-
-        this.setState((state, props) => {
-            return {
-                FilteredData: result,
-                isSearching: false
+                isFilterEnabled: true
             };
         });
     };
 
-    buildSenderButton = () => (
+    buildSenderButton = () => {
 
-        <Button
-            tabIndex="1"
-            key="query-sender-button"
-            loading={this.state.isSearching}
-            type="primary"
-            style={{ marginTop: "1em" }}
-            onClick={this.handleServerFiltering}>
-            Search
-        </Button>
-    );
-
-    handleServerFiltering = async event => {
-
-        const ServerFilterBy = this.mapFiltersToServer();
-
-        this.setState((state, props) => {
-            return {
-                ServerFilterBy,
-                isFilterEnabled: true,
-                isSearching: true
-            }
-        });
-
-        const result = await this.props.onPostFilters(ServerFilterBy);
-
-        this.setState({
-            FilteredData: result,
-            isSearching: false
-        });
+        return (
+            <Button
+                key="query-sender-button"
+                tabIndex="1"
+                type="primary"
+                style={{ marginTop: "1em" }}
+                onClick={this.sendFilterQuery}>
+                Search
+                </Button>
+        );
     };
-
-    renderListComponent = (renderList) => {
-
-        const { ServerFilterBy, isSearching, dataSource, FilteredData } = this.state;
-
-        return ServerFilterBy.length > 0
-            ? isSearching
-                ? renderList(dataSource, true)
-                : renderList(FilteredData, false)
-            : renderList(dataSource, false);
-    }
 
     render() {
         const { autoBuildFilters, renderList, withFilterPicker } = this.props;
@@ -437,7 +389,7 @@ class ServerFilter extends React.Component {
                     </Drawer>
 
                     <div className="filter-controls">
-                        <div className="filter-controls-left">
+                    <div className="filter-controls-left">
                             {withFilterPicker &&
                                 <div className="filter-picker">
                                     <Tooltip placement="left" title={`${this.state.filtersDrawerVisible ? 'Hide' : 'Show'} Filters`}>
@@ -473,22 +425,21 @@ class ServerFilter extends React.Component {
                             )}
                         </div>
                         <div className="filter-controls-right">
-                            <SearchAllBar
-                                clearText={this.state.isFilterEnabled &&
-                                    this.state.ServerFilterBy[0] &&
-                                    this.state.ServerFilterBy[0].Name !== "ALL"}
-                                onSearch={this.onSearchAllServer}
-                            />
+                            {
+                                <SearchAllBar
+                                    clearText={!this.state.isFilterEnabled}
+                                    onSearch={this.onSearchAllClient}
+                                />}
                         </div>
                     </div>
                 </Card>
-                {this.renderListComponent(renderList)}
+                {renderList(this.state.dataSource)}
             </div>
         );
     }
 }
 
-ServerFilter.propTypes = {
+ListFilter.propTypes = {
     dataFields: PropTypes.objectOf(
         PropTypes.shape({
             type: PropTypes.oneOf([
@@ -501,23 +452,21 @@ ServerFilter.propTypes = {
             ]).isRequired,
             uiName: PropTypes.string.isRequired,
             format: PropTypes.string,
-            dataSource: PropTypes.array.isRequired,
+            dataSource: PropTypes.array,
             nullValue: PropTypes.any
-        }).isRequired
+        })
     ).isRequired,
     savedVisibleFilters: PropTypes.array,
-    dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
+    dataSource: PropTypes.arrayOf(Object).isRequired,
     autoBuildFilters: PropTypes.bool,
-    onPostFilters: PropTypes.func.isRequired,
     renderList: PropTypes.func.isRequired,
-    customStyles: PropTypes.objectOf(PropTypes.object),
     excludeFields: PropTypes.arrayOf(PropTypes.string),
     withFilterPicker: PropTypes.bool
 };
 
-ServerFilter.defaultProps = {
+ListFilter.defaultProps = {
     withFilterPicker: true,
     autoBuildFilters: false,
 };
 
-export default ServerFilter;
+export default ListFilter;

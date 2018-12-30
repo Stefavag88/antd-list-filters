@@ -1,10 +1,10 @@
 import React from 'react';
-import { Input } from 'antd';
-import { PropTypes } from 'prop-types';
+import { AutoComplete } from 'antd';
+import PropTypes from 'prop-types';
 
 import './index.css';
 
-class StringInputFilter extends React.Component {
+class AutoCompleteFilter extends React.Component {
 
     constructor(props) {
         super(props);
@@ -18,27 +18,27 @@ class StringInputFilter extends React.Component {
         this.props.onChange(this.state);
     }
 
-    handleChange = (event) => {
-
-        const {value} = event.target; 
-
+    handleChange = (value) => {
+        
         this.setState((state, props) => {
             return { value }
         });
     }
 
     render() {
-
-        const { name } = this.props;
+        const { name, dataSource } = this.props;
 
         return (
             <div className="ant-filter-container">
                 <span>{name}</span>
                 <div className="filter-content">
-                <Input
+                <AutoComplete
+                    ref={this.inputRef}
                     style={{width:'100%', minWidth:200}}
+                    allowClear={true}
                     key={name}
                     onChange={this.handleChange}
+                    dataSource={dataSource}
                     placeholder={name} />
                 </div> 
             </div>
@@ -46,9 +46,10 @@ class StringInputFilter extends React.Component {
     }
 }
 
-StringInputFilter.propTypes = {
+AutoCompleteFilter.propTypes = {
     onChange: PropTypes.func.isRequired,
-    name: PropTypes.string.isRequired
+    name: PropTypes.string.isRequired,
+    dataSource: PropTypes.array
 }
 
-export default StringInputFilter;
+export default AutoCompleteFilter;

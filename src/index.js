@@ -1,7 +1,14 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import clientFilter from './lib/ClientFilter';
+import serverFilter from './lib/ServerFilter';
+import 'antd/dist/antd.css';
 import './index.css';
-import Example from './Example';
 
-ReactDOM.render(<Example />, document.getElementById('root'));
+export const ClientFilter = clientFilter;
+export const ServerFilter = serverFilter;
+
+export default {
+    ClientFilter, 
+    ServerFilter
+}
+
 

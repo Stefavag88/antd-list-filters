@@ -1,6 +1,6 @@
 import React from 'react';
 import { DatePicker, Select } from 'antd';
-import { PropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
 import fnsFormatDate from 'date-fns/format';
 import fnsParseDate from 'date-fns/parse';
 import fnsIsValid from 'date-fns/is_valid';

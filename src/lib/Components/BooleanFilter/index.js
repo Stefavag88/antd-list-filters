@@ -1,14 +1,14 @@
 import React from 'react';
 import { Select } from 'antd';
-import { PropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
 
-class MultiSelectFilter extends React.Component {
+class BooleanFilter extends React.Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
-            values: []
+            value: null
         }
     }
 
@@ -16,28 +16,29 @@ class MultiSelectFilter extends React.Component {
         this.props.onChange(this.state)
     }
 
-    handleChange = (values) => {
+    handleChange = (value) => {
         this.setState((state, props) => {
-            return { values }
+            return { value }
         });
     }
 
     render() {
 
-        const { name, dataSource } = this.props;
+        const { name } = this.props;
 
         return (
             <div className="ant-filter-container">
                 <span>{name}</span>
                 <div className="filter-content">
                     <Select
-                        style={{minWidth:200, width:'100%'}}
+                        style={{ minWidth: 200, width:'100%' }}
                         allowClear={true}
-                        onChange={this.handleChange}
-                        mode="multiple"
                         key={name}
+                        onChange={this.handleChange}
                         placeholder={name}>
-                        {dataSource}
+                        <Select.Option key={true}>YES</Select.Option>
+                        <Select.Option key={false}>NO</Select.Option>
+                        <Select.Option key={' - '}> - </Select.Option>
                     </Select>
                 </div>
             </div>
@@ -45,10 +46,9 @@ class MultiSelectFilter extends React.Component {
     }
 }
 
-MultiSelectFilter.propTypes = {
+BooleanFilter.propTypes = {
     onChange: PropTypes.func.isRequired,
     name: PropTypes.string.isRequired,
-    dataSource: PropTypes.array
 }
 
-export default MultiSelectFilter;
+export default BooleanFilter;

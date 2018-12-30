@@ -1,6 +1,6 @@
 import React  from 'react';
 import { InputNumber, Select } from 'antd';
-import { PropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
 import './index.css';
 
 const Option = Select.Option;
