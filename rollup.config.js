@@ -10,55 +10,14 @@ import { terser } from "rollup-plugin-terser";
 const NODE_ENV = process.env.NODE_ENV || "development";
 const outputFileCJS = NODE_ENV === "production" ? "./dist/cjs/prod.js" : "./dist/cjs/dev.js";
 const outputFileES = NODE_ENV === "production" ? "./dist/es/prod.js" : "./dist/es/dev.js";
-const doUglify = (useTerser) => {
+const doUglify = (esmFormat) => {
     
     return NODE_ENV === "production"
-        ? useTerser 
+        ? esmFormat 
             ? terser()
             : uglify()
         : null;
 } 
-// const defaultPlugins = [
-//     peerDepsExternal({
-//         includeDependencies: true
-//     }),
-//     postcss({
-//         modules: true, 
-//         extract: true, 
-//         extensions: ['.css', '.scss', '.less'],
-//         use : [
-//             ['less', { javascriptEnabled: true }]
-//         ]
-//     }),
-//     replace({
-//         "process.env.NODE_ENV": JSON.stringify(NODE_ENV)
-//     }),
-//     babel({
-//         exclude: "node_modules/**"
-//     }),
-//     resolve(),
-//     commonjs()
-// ]
-
-// rollup.rollup({
-//     input: "./src/index.js",
-//     plugins: [...defaultPlugins, doUglify(true)]
-// }).then(bundle => {
-//     bundle.write({
-//       format: 'esm',
-//       dest: outputFileES
-//     })
-// })
-
-// rollup.rollup({
-//     input: "./src/index.js",
-//     plugins: [...defaultPlugins, doUglify()]
-// }).then(bundle => {
-//     bundle.write({
-//       format: 'cjs',
-//       dest: outputFileCJS
-//     })
-// })
 
 export default {
     input: "./src/index.js",
