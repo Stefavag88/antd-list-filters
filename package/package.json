@@ -1,6 +1,6 @@
 {
   "name": "ant-list-filter",
-  "version": "0.2.8",
+  "version": "1.0.0",
   "main": "dist/es/prod.js",
   "private": false,
   "author": {
