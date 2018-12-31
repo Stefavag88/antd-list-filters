@@ -1,5 +1,3 @@
-*This project is not yet published on npm*
-
 # Description
 
 This is a component that creates and adds filtering functionality on your data.
