@@ -27,9 +27,13 @@ class BooleanFilter extends React.Component {
         const { name } = this.props;
 
         return (
-            <div className="ant-filter-container">
+            <div 
+                className="ant-filter-container"
+                style={{width:'100%'}}>
                 <span>{name}</span>
-                <div className="filter-content">
+                <div 
+                    className="filter-content"
+                    style={{display: 'flex',width:'100%'}}>
                     <Select
                         style={{ minWidth: 200, width:'100%' }}
                         allowClear={true}

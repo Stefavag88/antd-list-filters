@@ -1,7 +1,6 @@
 import React  from 'react';
 import { InputNumber, Select } from 'antd';
 import PropTypes from 'prop-types';
-import './index.css';
 
 const Option = Select.Option;
 
@@ -39,9 +38,13 @@ class NumberFilter extends React.Component {
         const { name, min, max } = this.props;
 
         return (
-            <div className="ant-filter-container">
+            <div 
+                className="ant-filter-container"
+                style={{width:'100%'}}>
                 <span>{name}</span>
-                <div className="filter-content">
+                <div 
+                    className="filter-content"
+                    style={{display: 'flex',width:'100%'}}>
                     <Select
                         className="operator-value"
                         defaultValue="=="
@@ -55,6 +58,7 @@ class NumberFilter extends React.Component {
                     </Select>
                     <InputNumber
                         className="filter-value"
+                        style={{marginLeft:'0.3em', width:'100%'}}
                         onChange={this.handleChange}
                         key={name}
                         placeholder={name}

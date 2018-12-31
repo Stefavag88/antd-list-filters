@@ -1,0 +1,10 @@
+{
+    "name": "filter-main",
+    "private": true,
+    "author": {
+      "name": "Vangelis Stefanakis"
+    },
+    "workspaces": ["package", "example"],
+    "license": "MIT"
+  }
+  

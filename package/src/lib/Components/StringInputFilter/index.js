@@ -2,8 +2,6 @@ import React from 'react';
 import { Input } from 'antd';
 import PropTypes from 'prop-types';
 
-import './index.css';
-
 class StringInputFilter extends React.Component {
 
     constructor(props) {
@@ -32,9 +30,13 @@ class StringInputFilter extends React.Component {
         const { name } = this.props;
 
         return (
-            <div className="ant-filter-container">
+            <div 
+                className="ant-filter-container"
+                style={{width:'100%'}}>
                 <span>{name}</span>
-                <div className="filter-content">
+                <div 
+                    className="filter-content"
+                    style={{display: 'flex',width:'100%'}}>
                 <Input
                     style={{width:'100%', minWidth:200}}
                     key={name}

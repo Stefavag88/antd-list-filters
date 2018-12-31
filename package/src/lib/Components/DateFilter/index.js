@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import fnsFormatDate from 'date-fns/format';
 import fnsParseDate from 'date-fns/parse';
 import fnsIsValid from 'date-fns/is_valid';
-import './index.css';
 
 const Option = Select.Option;
 const prepareDate = (date, format) => fnsFormatDate(fnsParseDate(date), format);
@@ -69,6 +68,7 @@ class DateFilter extends React.Component {
                 ref={this.dateRef}
                 format={this.props.format}
                 className="filter-value"
+                style={{marginLeft:'0.3em', width:'100%'}}
                 placeholder={this.props.name}
                 onChange={this.handleChange} />
         }
@@ -79,9 +79,13 @@ class DateFilter extends React.Component {
         const { name } = this.props;
 
         return (
-            <div className="ant-filter-container">
+            <div 
+                className="ant-filter-container"
+                style={{width:'100%'}}>
                 <span>{name}</span>
-                <div className="filter-content">
+                <div 
+                    className="filter-content"
+                    style={{display: 'flex',width:'100%'}}>
                     <Select
                         className="operator-value"
                         defaultValue="=="

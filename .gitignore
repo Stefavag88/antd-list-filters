@@ -2,14 +2,16 @@
 
 # dependencies
 /node_modules
+/example/node_modules
+/package/node_modules
 /.pnp
 .pnp.js
 
 # testing
 /coverage
 
-# production
-/dist
+# distrubution 
+/package/dist
 
 # misc
 .DS_Store

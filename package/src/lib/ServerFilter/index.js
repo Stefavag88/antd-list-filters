@@ -436,8 +436,8 @@ class ServerFilter extends React.Component {
                         </div>
                     </Drawer>
 
-                    <div className="filter-controls">
-                        <div className="filter-controls-left">
+                    <div className="filter-controls" style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}>
+                        <div className="filter-controls-left" style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}>
                             {withFilterPicker &&
                                 <div className="filter-picker">
                                     <Tooltip placement="left" title={`${this.state.filtersDrawerVisible ? 'Hide' : 'Show'} Filters`}>

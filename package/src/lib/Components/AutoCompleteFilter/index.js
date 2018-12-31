@@ -2,8 +2,6 @@ import React from 'react';
 import { AutoComplete } from 'antd';
 import PropTypes from 'prop-types';
 
-import './index.css';
-
 class AutoCompleteFilter extends React.Component {
 
     constructor(props) {
@@ -29,9 +27,13 @@ class AutoCompleteFilter extends React.Component {
         const { name, dataSource } = this.props;
 
         return (
-            <div className="ant-filter-container">
+            <div 
+                className="ant-filter-container"
+                style={{width:'100%'}}>
                 <span>{name}</span>
-                <div className="filter-content">
+                <div 
+                    className="filter-content"
+                    style={{display: 'flex',width:'100%'}}>
                 <AutoComplete
                     ref={this.inputRef}
                     style={{width:'100%', minWidth:200}}
